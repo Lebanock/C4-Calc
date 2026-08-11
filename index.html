@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Pace C4 - Pista</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --bg-primary: #080d1a;
@@ -27,7 +29,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
@@ -63,21 +65,10 @@
             gap: 16px;
         }
 
-        .logo-badge {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: -1px;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.4);
-            border: 2px solid #7dd3fc;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        .logo-img {
+            max-height: 50px;
+            width: auto;
+            object-fit: contain;
         }
 
         header h1 {
@@ -191,13 +182,9 @@
             min-height: 60px;
         }
 
-        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+        input:focus, select:focus, textarea:focus {
             border-color: var(--c4-cyan);
             box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
-        }
-
-        select {
-            cursor: pointer;
         }
 
         .btn {
@@ -233,6 +220,18 @@
 
         .btn-secondary:hover {
             background: rgba(56, 189, 248, 0.15);
+        }
+
+        .btn-danger-outline {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: var(--danger);
+            box-shadow: none;
+        }
+
+        .btn-danger-outline:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: var(--danger);
         }
 
         .btn-icon {
@@ -366,7 +365,7 @@
             padding: 24px;
             width: 90%;
             max-width: 800px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 25px rgba(14, 165, 233, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(14, 165, 233, 0.2);
             transform: translateY(-20px);
             transition: transform 0.2s ease;
             max-height: 90vh;
@@ -549,6 +548,17 @@
             text-transform: uppercase;
             font-size: 0.72rem;
             letter-spacing: 0.5px;
+            user-select: none;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            transition: color 0.2s, background-color 0.2s;
+        }
+
+        th.sortable:hover {
+            color: var(--c4-cyan);
+            background-color: rgba(56, 189, 248, 0.1);
         }
 
         th:nth-child(2), td:nth-child(2) {
@@ -640,7 +650,6 @@
             color: #38bdf8;
             padding: 4px 8px;
             border-radius: 6px;
-            font-family: monospace;
             display: inline-flex;
             flex-direction: column;
             align-items: center;
@@ -704,6 +713,198 @@
             cursor: help;
             border-bottom: 1px dotted var(--text-muted);
         }
+
+        /* Certificado A4 */
+        .direct-cert-wrapper {
+            position: relative;
+            width: 794px;
+            height: 1120px;
+            max-height: 1120px;
+            background: #ffffff;
+            background: radial-gradient(circle at 50% 15%, #ffffff 0%, #edf4fc 60%, #dae8f9 100%);
+            padding: 38px 45px 30px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            box-sizing: border-box;
+            color: #0b1c33;
+            margin: 0 auto;
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
+        .direct-cert-wrapper .frame-outer {
+            position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px;
+            border: 2px solid #0a1e38; pointer-events: none;
+        }
+        .direct-cert-wrapper .frame-middle {
+            position: absolute; top: 16px; left: 16px; right: 16px; bottom: 16px;
+            border: 1px solid rgba(56, 189, 248, 0.6); pointer-events: none;
+        }
+        .direct-cert-wrapper .frame-inner {
+            position: absolute; top: 20px; left: 20px; right: 20px; bottom: 20px;
+            border: 1.5px solid #0f2d59; pointer-events: none;
+        }
+        .direct-cert-wrapper .corner {
+            position: absolute; width: 24px; height: 24px;
+            border: 3px solid #0a1e38; pointer-events: none;
+        }
+        .direct-cert-wrapper .corner-tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+        .direct-cert-wrapper .corner-tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+        .direct-cert-wrapper .corner-bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+        .direct-cert-wrapper .corner-br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+        
+        .direct-cert-wrapper .cert-content {
+            position: relative; z-index: 2; display: flex;
+            flex-direction: column; align-items: center; text-align: center;
+            height: 100%; justify-content: space-between;
+        }
+        .direct-cert-wrapper .header-section { display: flex; flex-direction: column; align-items: center; margin-top: 5px; }
+        .direct-cert-wrapper .logo-img-wrapper { display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .direct-cert-wrapper .logo-img-clean {
+            max-height: 80px; max-width: 170px; width: auto; height: auto;
+            object-fit: contain;
+        }
+        .direct-cert-wrapper .logo-fallback-text {
+            font-family: 'Orbitron', 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.2rem; font-weight: 900; font-style: italic; color: #0284c7; letter-spacing: -1px;
+        }
+        .direct-cert-wrapper .main-title { font-size: 1.95rem; font-weight: 900; color: #0b1c33; letter-spacing: 1.5px; text-transform: uppercase; }
+        .direct-cert-wrapper .sub-title { font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-top: 4px; }
+        .direct-cert-wrapper .athlete-container { margin: 10px 0; }
+        .direct-cert-wrapper .athlete-name { font-size: 2.15rem; font-weight: 800; color: #0f2e5a; letter-spacing: -0.5px; }
+        .direct-cert-wrapper .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 88%; margin: 5px auto; }
+        .direct-cert-wrapper .metric-box { display: flex; flex-direction: column; align-items: center; }
+        .direct-cert-wrapper .metric-label { font-size: 0.74rem; font-weight: 800; color: #334155; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+        .direct-cert-wrapper .metric-val { font-size: 1.45rem; font-weight: 900; color: #0c2340; }
+        .direct-cert-wrapper .zones-section { width: 92%; margin-top: 10px; }
+        .direct-cert-wrapper .zones-header-title {
+            display: flex; align-items: center; justify-content: flex-start; gap: 8px;
+            font-size: 0.95rem; font-weight: 800; color: #0c2340; margin-bottom: 10px;
+        }
+        .direct-cert-wrapper .target-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 18px; height: 18px; border-radius: 50%; background: #ef4444;
+            color: #ffffff; font-size: 11px;
+        }
+        .direct-cert-wrapper .table-vam { width: 100%; border-collapse: collapse; }
+        .direct-cert-wrapper .table-vam th {
+            font-size: 0.75rem; font-weight: 800; color: #0c2340; text-transform: uppercase;
+            letter-spacing: 0.8px; padding: 8px 10px; border-bottom: 2px solid #0f2744;
+            background: transparent;
+        }
+        .direct-cert-wrapper .table-vam td { padding: 8.5px 10px; border-bottom: 1.5px solid #0f2744; font-size: 0.92rem; }
+        .direct-cert-wrapper .col-zone { font-weight: 800; color: #0c2340; text-align: left; width: 36%; }
+        .direct-cert-wrapper .col-vam { font-weight: 600; color: #0f172a; text-align: center; width: 32%; }
+        .direct-cert-wrapper .col-pace { font-weight: 800; color: #073567; text-align: right; width: 32%; font-variant-numeric: tabular-nums; }
+        .direct-cert-wrapper .pace-unit { font-weight: 600; color: #0c2340; font-size: 0.82rem; }
+        .direct-cert-wrapper .footer-section {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            position: relative; width: 100%; padding-bottom: 6px;
+        }
+        .direct-cert-wrapper .footer-meta { font-size: 0.85rem; color: #1e293b; font-weight: 600; margin-bottom: 8px; }
+        .direct-cert-wrapper .bottom-c4-wrapper {
+            position: relative; width: 100%; display: flex;
+            justify-content: center; align-items: center; margin-top: 4px;
+        }
+        .direct-cert-wrapper .bottom-c4-line { position: absolute; left: 0; right: 0; height: 2px; background: #0a1e38; z-index: 1; }
+        .direct-cert-wrapper .bottom-c4-badge {
+            position: relative; z-index: 2;
+            background: #dae8f9;
+            padding: 0 20px; display: flex; align-items: center; justify-content: center;
+        }
+        .direct-cert-wrapper .c4-metallic-text {
+            font-family: 'Orbitron', 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.7rem; font-weight: 900; font-style: italic; letter-spacing: -1px;
+            color: #0284c7;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
+        @media print {
+            html, body {
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                overflow: hidden !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body > *:not(#directCertModal) {
+                display: none !important;
+            }
+
+            #directCertModal {
+                position: static !important;
+                display: block !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: none !important;
+                backdrop-filter: none !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                overflow: hidden !important;
+            }
+
+            #directCertModal .modal {
+                position: static !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                max-width: none !important;
+                max-height: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: none !important;
+                border: none !important;
+                box-shadow: none !important;
+                transform: none !important;
+                overflow: hidden !important;
+            }
+
+            .cert-modal-controls, #directCertModal .modal-header {
+                display: none !important;
+            }
+
+            #directCertContainer {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                overflow: hidden !important;
+            }
+
+            .direct-cert-wrapper {
+                width: 210mm !important;
+                height: 297mm !important;
+                max-height: 297mm !important;
+                margin: 0 !important;
+                padding: 20mm 16mm 14mm 16mm !important;
+                box-shadow: none !important;
+                box-sizing: border-box !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -711,7 +912,7 @@
 <div class="container">
     <header>
         <div class="logo-container">
-           <img src="logo.png" alt="Logo C4" class="logo-img">
+           <img src="logo.png" alt="Logo C4" class="logo-img" id="mainLogoImg">
             <div>
                 <h1>Calculadora de Pace C4</h1>
                 <p>Gerenciamento, Histórico e Evolução de Testes de Pista</p>
@@ -719,7 +920,7 @@
         </div>
         <div class="header-actions">
             <button class="btn-action" onclick="toggleAddForm()">➕ Registrar Teste</button>
-            <button class="btn-action" onclick="exportToExcel()">📊 Exportar Excel</button>
+            <button class="btn-action" onclick="exportToExcel()" title="Exportar testes/provas">📊 Export Excel</button>
             <button class="btn-gear" onclick="toggleModal(true)">⚙️ Configurações</button>
         </div>
     </header>
@@ -789,6 +990,9 @@
                     <option value="warn">🟡 Atenção</option>
                     <option value="alert">🔴 Vencidos</option>
                 </select>
+                <select id="filterTargetDistanceSelect" class="filter-select" onchange="renderTable()" style="display: none;">
+                    <option value="all">🎯 Distância (Todas)</option>
+                </select>
             </div>
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="view-mode-bar">
@@ -850,27 +1054,32 @@
                 <div class="pct-row">
                     <label>🟡 Status Atenção (dias)</label>
                     <div class="pct-inputs">
-                        <input type="number" id="alertWarnDaysInput" min="1" max="365" style="width: 100px;">
+                        <input type="number" id="warnDays" min="1" max="365" style="width: 100px;">
                         <span style="font-size: 0.8rem; color: var(--text-muted);">dias após o teste</span>
                     </div>
                 </div>
                 <div class="pct-row">
                     <label>🔴 Status Vencido (dias)</label>
                     <div class="pct-inputs">
-                        <input type="number" id="alertAlertDaysInput" min="1" max="365" style="width: 100px;">
+                        <input type="number" id="alertDays" min="1" max="365" style="width: 100px;">
                         <span style="font-size: 0.8rem; color: var(--text-muted);">dias após o teste</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <button class="btn" onclick="toggleModal(false)">Salvar & Fechar</button>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
+            <button class="btn" id="btnSaveConfig" style="width: 100%;">Salvar & Fechar</button>
+            <button type="button" class="btn btn-danger-outline" onclick="resetAppLocalStorage()" style="margin-top: 5px;">
+                🗑️ Limpar Todos os Dados Locais
+            </button>
+        </div>
     </div>
 </div>
 
 <!-- Modal Histórico -->
 <div class="modal-overlay" id="historyModal">
-    <div class="modal" style="max-width: 750px;">
+    <div class="modal" style="max-width: 800px;">
         <div class="modal-header">
             <h2 id="historyModalTitle">📊 Histórico do Aluno</h2>
             <button class="close-btn" onclick="toggleHistoryModal(false)">&times;</button>
@@ -948,76 +1157,91 @@
     </div>
 </div>
 
+<!-- Modal Certificado -->
+<div class="modal-overlay" id="directCertModal">
+    <div class="modal" style="max-width: 860px; padding: 18px;">
+        <div class="modal-header" style="margin-bottom: 12px; padding-bottom: 10px;">
+            <h2>🎴 Certificado do Atleta</h2>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-action cert-modal-controls" id="btnDownloadPdf" style="padding: 6px 14px; font-size: 0.82rem;" onclick="downloadCertAsPdf()">📥 Baixar PDF</button>
+                <button class="btn btn-action cert-modal-controls" style="padding: 6px 14px; font-size: 0.82rem;" onclick="window.print()">🖨️ Imprimir</button>
+                <button class="close-btn cert-modal-controls" onclick="toggleCertModal(false)">&times;</button>
+            </div>
+        </div>
+        <div id="directCertContainer" style="overflow-x: auto; padding: 6px 0; display: flex; justify-content: center;"></div>
+    </div>
+</div>
+
 <script>
     const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxR6GHIOHdVu8IImzTO7oAgXz_5_xL80jOgFsn_nMwjUIFES6M9OfaPCFYftXAs0Tg/exec';
 
+    const HARDCODED_DEFAULTS = {
+        distanceConfigs: [
+            { dist: 200, min: 120, max: 130 },
+            { dist: 400, min: 114, max: 120 },
+            { dist: 600, min: 108, max: 114 },
+            { dist: 800, min: 102, max: 108 },
+            { dist: 1000, min: 96, max: 102 },
+            { dist: 1600, min: 92, max: 96 },
+            { dist: 2000, min: 86, max: 92 }
+        ],
+        zoneConfigs: [
+            { name: "Z1 - Regenerativo", min: 60, max: 70 },
+            { name: "Z2 - Endurance", min: 70, max: 78 },
+            { name: "Z3 - Tempo/Ritmo", min: 78, max: 86 },
+            { name: "Z4 - Limiar", min: 86, max: 92 },
+            { name: "Z5 - VO2max", min: 92, max: 100 },
+            { name: "Z6 - Anaerobico", min: 100, max: 110 },
+            { name: "Z7 - Neuromuscular", min: 110, max: 120 }
+        ],
+        alertConfig: { warnDays: 30, alertDays: 60 }
+    };
+
+    let distanceConfigs = JSON.parse(JSON.stringify(HARDCODED_DEFAULTS.distanceConfigs));
+    let zoneConfigs = JSON.parse(JSON.stringify(HARDCODED_DEFAULTS.zoneConfigs));
+    let alertConfig = { ...HARDCODED_DEFAULTS.alertConfig };
+    
     let targetRacesData = [];
     let isFetchingTargetRaces = false;
-
-    let distanceConfigs = [
-        { dist: 200, min: 105, max: 115 },
-        { dist: 400, min: 103, max: 112 },
-        { dist: 600, min: 102, max: 110 },
-        { dist: 800, min: 101, max: 108 },
-        { dist: 1000, min: 98, max: 102 },
-        { dist: 1600, min: 95, max: 100 },
-        { dist: 2000, min: 93, max: 98 }
-    ];
-
-    let zoneConfigs = [
-        { name: 'Z1 - Regenerativo', min: 60, max: 70 },
-        { name: 'Z2 - Endurance', min: 70, max: 80 },
-        { name: 'Z3 - Limiar', min: 80, max: 90 },
-        { name: 'Z4 - VO2 Máx', min: 90, max: 100 },
-        { name: 'Z5 - Anaeróbico', min: 100, max: 115 }
-    ];
-
-    let alertConfig = { warnDays: 60, alertDays: 90 };
     let viewMode = 'dist';
     let students = [];
     let currentHistoryStudentName = '';
+    let currentExportStudent = null;
     let myChartInstance = null;
 
-    const STORAGE_KEY_STUDENTS = 'c4_pace_students_v10';
-    const STORAGE_KEY_DIST_CFG = 'c4_pace_dist_cfg_v10';
-    const STORAGE_KEY_ZONE_CFG = 'c4_pace_zone_cfg_v10';
-    const STORAGE_KEY_VIEW = 'c4_pace_view_v10';
-    const STORAGE_KEY_ALERTS = 'c4_pace_alerts_v10';
+    let sortColumn = null;
+    let sortDirection = 'asc';
 
-    // Normalização ultraleve para padronizar nomes
+    const STORAGE_KEY_STUDENTS = 'c4_pace_students_v10';
+    const STORAGE_KEY_CONFIGS = 'c4_pace_user_configs_v10';
+    const STORAGE_KEY_VIEW = 'c4_pace_view_v10';
+
     function normalizarNome(nome) {
         if (!nome) return '';
         return String(nome)
             .toLowerCase()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
-            .replace(/\b(de|da|dos|das|e)\b/g, '') // remove conectores comuns
+            .replace(/\b(de|da|dos|das|e)\b/g, '')
             .replace(/[^a-z0-9\s]/g, '')
             .replace(/\s+/g, ' ')
             .trim();
     }
 
-    // Reconhecimento leve e rápido de nomes semelhantes
     function saoNomesIguais(nome1, nome2) {
         const n1 = normalizarNome(nome1);
         const n2 = normalizarNome(nome2);
         if (n1 === n2) return true;
         if (!n1 || !n2) return false;
-
-        // Se um nome contiver completamente o outro (ex: "Carlos Silva" e "Carlos Silva Junior")
         if (n1.includes(n2) || n2.includes(n1)) return true;
 
-        const palavras1 = n1.split(' ').filter(w => w.length > 1);
-        const palavras2 = n2.split(' ').filter(w => w.length > 1);
+        const p1 = n1.split(' ').filter(w => w.length > 1);
+        const p2 = n2.split(' ').filter(w => w.length > 1);
+        if (p1.length === 0 || p2.length === 0) return false;
 
-        if (palavras1.length === 0 || palavras2.length === 0) return false;
-
-        // Verifica intersecção de palavras importantes (primeiro e último nome)
-        const interseccao = palavras1.filter(p => palavras2.includes(p));
-        const menorTamanho = Math.min(palavras1.length, palavras2.length);
-
-        // Considera semelhante se compartilharem a maioria das palavras
-        return (interseccao.length / menorTamanho) >= 0.7;
+        const interseccao = p1.filter(p => p2.includes(p));
+        const menor = Math.min(p1.length, p2.length);
+        return (interseccao.length / menor) >= 0.7;
     }
 
     function buildTestKey(name, dateStr, dist) {
@@ -1058,122 +1282,163 @@
     }
 
     function loadFromLocalStorage() {
-        const savedView = localStorage.getItem(STORAGE_KEY_VIEW);
-        if (savedView) viewMode = savedView;
+        try {
+            const cfgs = localStorage.getItem(STORAGE_KEY_CONFIGS);
+            if (cfgs) {
+                const parsed = JSON.parse(cfgs);
+                if (parsed.distanceConfigs) distanceConfigs = parsed.distanceConfigs;
+                if (parsed.zoneConfigs) zoneConfigs = parsed.zoneConfigs;
+                if (parsed.alertConfig) alertConfig = parsed.alertConfig;
+            }
 
-        document.getElementById('btnModeDist').classList.toggle('active', viewMode === 'dist');
-        document.getElementById('btnModeZone').classList.toggle('active', viewMode === 'zone');
-        document.getElementById('btnModeTarget').classList.toggle('active', viewMode === 'target');
+            const view = localStorage.getItem(STORAGE_KEY_VIEW);
+            if (view) viewMode = view;
 
-        const savedDist = localStorage.getItem(STORAGE_KEY_DIST_CFG);
-        if (savedDist) try { distanceConfigs = JSON.parse(savedDist); } catch(e) {}
-
-        const savedZone = localStorage.getItem(STORAGE_KEY_ZONE_CFG);
-        if (savedZone) try { zoneConfigs = JSON.parse(savedZone); } catch(e) {}
-
-        const savedAlerts = localStorage.getItem(STORAGE_KEY_ALERTS);
-        if (savedAlerts) try { alertConfig = JSON.parse(savedAlerts); } catch(e) {}
-
-        document.getElementById('alertWarnDaysInput').value = alertConfig.warnDays;
-        document.getElementById('alertAlertDaysInput').value = alertConfig.alertDays;
-
-        const savedStudents = localStorage.getItem(STORAGE_KEY_STUDENTS);
-        if (savedStudents) try { students = JSON.parse(savedStudents); } catch(e) {}
+            const st = localStorage.getItem(STORAGE_KEY_STUDENTS);
+            if (st) {
+                students = JSON.parse(st).map(s => ({
+                    ...s,
+                    cleanName: s.cleanName || normalizarNome(s.name)
+                }));
+            }
+        } catch (e) {
+            console.error('Erro ao ler LocalStorage:', e);
+        }
     }
 
     function saveData() {
-        localStorage.setItem(STORAGE_KEY_DIST_CFG, JSON.stringify(distanceConfigs));
-        localStorage.setItem(STORAGE_KEY_ZONE_CFG, JSON.stringify(zoneConfigs));
+        localStorage.setItem(STORAGE_KEY_CONFIGS, JSON.stringify({
+            distanceConfigs,
+            zoneConfigs,
+            alertConfig
+        }));
         localStorage.setItem(STORAGE_KEY_VIEW, viewMode);
-        localStorage.setItem(STORAGE_KEY_ALERTS, JSON.stringify(alertConfig));
         localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
         document.getElementById('saveStatus').innerHTML = `💾 Salvo`;
     }
 
     function toggleAddForm() {
         const card = document.getElementById('addFormCard');
-        card.style.display = (card.style.display === 'none' || card.style.display === '') ? 'block' : 'none';
-        if (card.style.display === 'block') card.scrollIntoView({ behavior: 'smooth' });
+        const icon = document.getElementById('formToggleIcon');
+        const isHidden = (card.style.display === 'none' || card.style.display === '');
+        card.style.display = isHidden ? 'block' : 'none';
+        if (icon) {
+            icon.innerText = isHidden ? '▲ Ocultar' : '▼ Expandir';
+        }
+        if (isHidden) card.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function sendStudentToSheets(studentRecord) {
+    async function sendStudentToSheets(studentRecord) {
         if (!GOOGLE_SHEETS_WEB_APP_URL) return;
-        fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(studentRecord)
-        }).catch(err => console.error('Erro envio Sheets:', err));
+        const statusSpan = document.getElementById('saveStatus');
+        
+        try {
+            statusSpan.innerHTML = `⏳ Enviando...`;
+            await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(studentRecord)
+            });
+            statusSpan.innerHTML = `☁️ Salvo no Sheets`;
+        } catch (err) {
+            console.error('Erro ao enviar dados para o Google Sheets:', err);
+            statusSpan.innerHTML = `⚠️ Erro de Envio`;
+        }
     }
 
-    function syncWithGoogleSheets() {
+    function updateTargetDistanceFilterOptions() {
+        const select = document.getElementById('filterTargetDistanceSelect');
+        const currentValue = select.value;
+
+        const uniqueDistances = [...new Set(
+            targetRacesData
+                .map(r => String(r.distancia || '').trim())
+                .filter(d => d !== '')
+        )].sort((a, b) => parseDistanceKm(a) - parseDistanceKm(b));
+
+        let optionsHtml = '<option value="all">🎯 Distância (Todas)</option>';
+        uniqueDistances.forEach(dist => {
+            optionsHtml += `<option value="${dist}">${dist}</option>`;
+        });
+
+        select.innerHTML = optionsHtml;
+        select.value = uniqueDistances.includes(currentValue) || currentValue === 'all' ? currentValue : 'all';
+    }
+
+    async function syncWithGoogleSheets() {
         if (!GOOGLE_SHEETS_WEB_APP_URL) return;
 
         isFetchingTargetRaces = true;
         const statusSpan = document.getElementById('saveStatus');
         statusSpan.innerHTML = `🔄 Sincronizando...`;
 
-        fetch(GOOGLE_SHEETS_WEB_APP_URL)
-            .then(res => res.json())
-            .then(data => {
-                isFetchingTargetRaces = false;
+        try {
+            const res = await fetch(GOOGLE_SHEETS_WEB_APP_URL);
+            if (!res.ok) throw new Error('Falha na resposta HTTP');
+            
+            const data = await res.json();
+            isFetchingTargetRaces = false;
 
-                if (data.provasAlvo && Array.isArray(data.provasAlvo)) {
-                    targetRacesData = data.provasAlvo;
-                } else if (Array.isArray(data)) {
-                    targetRacesData = data;
-                }
+            if (data.provasAlvo && Array.isArray(data.provasAlvo)) {
+                targetRacesData = data.provasAlvo;
+            } else if (Array.isArray(data)) {
+                targetRacesData = data;
+            }
 
-                if (data.testes && Array.isArray(data.testes)) {
-                    const updatedStudents = [];
+            if (data.testes && Array.isArray(data.testes)) {
+                const updatedStudents = [];
 
-                    data.testes.forEach(remoteTest => {
-                        const name = remoteTest.name || remoteTest.nome;
-                        const dist = parseInt(remoteTest.testDist || remoteTest.distancia);
-                        const date = remoteTest.date || remoteTest.data || remoteTest.dataTeste || '';
-                        const timeStr = remoteTest.timeStr || remoteTest.tempo;
-                        const sec = timeToSeconds(timeStr);
+                data.testes.forEach(remoteTest => {
+                    const name = remoteTest.name || remoteTest.nome;
+                    const dist = parseInt(remoteTest.testDist || remoteTest.distancia);
+                    const date = remoteTest.date || remoteTest.data || remoteTest.dataTeste || '';
+                    const timeStr = remoteTest.timeStr || remoteTest.tempo;
+                    const sec = timeToSeconds(timeStr);
 
-                        if (name && dist) {
-                            updatedStudents.push({
-                                name: name,
-                                testDist: dist,
-                                date: date,
-                                timeStr: timeStr,
-                                timeSec: sec || remoteTest.timeSec,
-                                obs: remoteTest.obs || remoteTest.observacoes || ''
-                            });
-                        }
-                    });
-
-                    if (updatedStudents.length > 0) {
-                        students = updatedStudents;
+                    if (name && dist) {
+                        updatedStudents.push({
+                            name: name,
+                            cleanName: normalizarNome(name),
+                            testDist: dist,
+                            date: date,
+                            timeStr: timeStr,
+                            timeSec: sec || remoteTest.timeSec,
+                            obs: remoteTest.obs || remoteTest.observacoes || ''
+                        });
                     }
+                });
 
-                    saveData();
-                    updateWeekFilterOptions();
+                if (updatedStudents.length > 0) {
+                    students = updatedStudents;
                 }
 
-                statusSpan.innerHTML = `☁️ Sincronizado`;
-                renderTable();
-            })
-            .catch(err => {
-                console.error(err);
-                isFetchingTargetRaces = false;
-                statusSpan.innerHTML = `❌ Erro Sync`;
-                renderTable();
-            });
+                saveData();
+                updateWeekFilterOptions();
+            }
+
+            updateTargetDistanceFilterOptions();
+            statusSpan.innerHTML = `☁️ Sincronizado`;
+            renderTable();
+        } catch (err) {
+            console.error('Erro na sincronização:', err);
+            isFetchingTargetRaces = false;
+            statusSpan.innerHTML = `❌ Erro Sync`;
+            renderTable();
+        }
     }
 
     function exportToExcel() {
-        if (students.length === 0 && targetRacesData.length === 0) return alert('Sem dados para exportar.');
+        if (students.length === 0 && targetRacesData.length === 0) {
+            return alert('Sem dados para exportar.');
+        }
 
         const wb = XLSX.utils.book_new();
+        
         const testsData = students.map(s => {
             const stats = calculateTestStats(s.timeSec, s.testDist);
             return {
-                'Nome do Aluno': s.name,
-                'Distância (m)': s.testDist,
+                'Nome do Aluno': s.name || '',
+                'Distância (m)': s.testDist || '',
                 'Data do Teste': formatDate(s.date),
                 'Tempo (MM:SS)': formatTimeDisplay(s.timeStr),
                 'Pace (/km)': stats.pace,
@@ -1183,17 +1448,217 @@
         });
         XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(testsData), "Testes de Pista");
 
-        const racesData = targetRacesData.map(r => ({
-            'Atleta': r.nome || '',
-            'Prova Alvo': r.prova || '',
-            'Distância': String(r.distancia || '').trim(),
-            'Data da Prova': formatDate(r.dataProva) || '',
-            'Tempo Alvo': formatTimeDisplay(String(r.tempoAlvo || '').trim()),
-            'Pace Necessário': calculateTargetPace(String(r.tempoAlvo || '').trim(), String(r.distancia || '').trim())
-        }));
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(racesData), "Provas Alvo");
+        let racesData = [];
+        if (Array.isArray(targetRacesData) && targetRacesData.length > 0) {
+            racesData = targetRacesData.map(r => {
+                const getVal = (keys) => {
+                    for (let k of keys) {
+                        if (r && r[k] !== undefined && r[k] !== null) return String(r[k]).trim();
+                    }
+                    return '';
+                };
 
+                const nome = getVal(['nome', 'Atleta', 'atleta', 'Nome', 'ALUNO', 'Aluno']);
+                const prova = getVal(['prova', 'Prova', 'Prova Alvo', 'PROVA', 'provaAlvo']);
+                const distancia = getVal(['distancia', 'Distancia', 'Distância', 'DISTANCIA']);
+                const dataProva = getVal(['dataProva', 'data', 'Data', 'Data da Prova', 'DATA']);
+                const tempoAlvo = getVal(['tempoAlvo', 'tempo', 'Tempo', 'Tempo Alvo', 'TEMPO']);
+
+                return {
+                    'Atleta': nome,
+                    'Prova Alvo': prova,
+                    'Distância': distancia,
+                    'Data da Prova': formatDate(dataProva) || dataProva,
+                    'Tempo Alvo': formatTimeDisplay(tempoAlvo),
+                    'Pace Necessário': calculateTargetPace(tempoAlvo, distancia)
+                };
+            });
+        } else {
+            racesData = [{
+                'Atleta': 'Nenhum dado encontrado',
+                'Prova Alvo': 'Sincronize com o Sheets',
+                'Distância': '',
+                'Data da Prova': '',
+                'Tempo Alvo': '',
+                'Pace Necessário': ''
+            }];
+        }
+
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(racesData), "Provas Alvo");
         XLSX.writeFile(wb, `c4_pace_dados_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+
+    function toggleCertModal(show) {
+        document.getElementById('directCertModal').classList.toggle('active', show);
+    }
+
+    function exportStudentCertificate(key) {
+        const student = students.find(s => buildTestKey(s.name, s.date, s.testDist) === key);
+        if (!student) return alert('Registro não encontrado.');
+
+        currentExportStudent = student;
+        const stats = calculateTestStats(student.timeSec, student.testDist);
+        const formattedDate = formatDate(student.date);
+        const logoSrc = document.getElementById('mainLogoImg') ? document.getElementById('mainLogoImg').src : 'logo.png';
+
+        let tableRowsHtml = '';
+        zoneConfigs.forEach(z => {
+            const paceFastSec = calculatePaceFromVamPct(student.timeSec, student.testDist, z.max);
+            const paceSlowSec = calculatePaceFromVamPct(student.timeSec, student.testDist, z.min);
+
+            tableRowsHtml += `
+                <tr>
+                    <td class="col-zone">${z.name}</td>
+                    <td class="col-vam">${z.min}% - ${z.max}% VAM</td>
+                    <td class="col-pace">${secondsToFormatted(paceFastSec)} ~ ${secondsToFormatted(paceSlowSec)} <span class="pace-unit">/km</span></td>
+                </tr>
+            `;
+        });
+
+        const certHtml = `
+            <div class="direct-cert-wrapper" id="certExportElement">
+                <div class="frame-outer"></div>
+                <div class="frame-middle"></div>
+                <div class="frame-inner"></div>
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+
+                <div class="cert-content">
+                    <div class="header-section">
+                        <div class="logo-img-wrapper">
+                            <img src="${logoSrc}" class="logo-img-clean" alt="C4 Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span class="logo-fallback-text" style="display:none;">C4 PACE</span>
+                        </div>
+                        <h1 class="main-title">C4 PACE ASSESSORIA</h1>
+                        <p class="sub-title">Certificado e Relatório de Zonas de Treinamento</p>
+                    </div>
+
+                    <div class="athlete-container">
+                        <h2 class="athlete-name">${student.name}</h2>
+                    </div>
+
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <span class="metric-label">Distância</span>
+                            <span class="metric-val">${student.testDist}m</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Tempo Final</span>
+                            <span class="metric-val">${formatTimeDisplay(student.timeStr)}</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Pace Médio</span>
+                            <span class="metric-val">${stats.pace}</span>
+                        </div>
+                    </div>
+
+                    <div class="zones-section">
+                        <div class="zones-header-title">
+                            <span class="target-icon">🎯</span>
+                            <span>Zonas de Intensidade de Treino (VAM):</span>
+                        </div>
+                        <table class="table-vam">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left;">Zona</th>
+                                    <th style="text-align: center;">Intensidade (% VAM)</th>
+                                    <th style="text-align: right;">Faixa de Pace (/km)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableRowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="footer-section">
+                        <div class="footer-meta">
+                            Data do Teste: ${formattedDate}
+                        </div>
+                        <div class="bottom-c4-wrapper">
+                            <div class="bottom-c4-line"></div>
+                            <div class="bottom-c4-badge">
+                                <span class="c4-metallic-text">C4</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('directCertContainer').innerHTML = certHtml;
+        toggleCertModal(true);
+    }
+
+    async function downloadCertAsPdf() {
+        const certElement = document.getElementById('certExportElement');
+        if (!certElement || !currentExportStudent) return alert('Certificado não carregado.');
+
+        const btn = document.getElementById('btnDownloadPdf');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `⏳ Gerando PDF...`;
+        btn.disabled = true;
+
+        const filename = `Certificado_${normalizarNome(currentExportStudent.name).replace(/\s+/g, '_')}_${currentExportStudent.testDist}m_${currentExportStudent.date || 'data'}.pdf`;
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            await pdf.html(certElement, {
+                callback: function (doc) {
+                    doc.save(filename);
+                    btn.innerHTML = `✅ PDF Baixado!`;
+                },
+                x: 0,
+                y: 0,
+                width: 210,
+                windowWidth: 794,
+                autoPaging: false
+            });
+        } catch (err) {
+            console.error('Tentativa com motor html() falhou, executando fallback via canvas:', err);
+            try {
+                const canvas = await html2canvas(certElement, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+                pdf.save(filename);
+                btn.innerHTML = `✅ PDF Baixado!`;
+            } catch (canvasErr) {
+                console.error('Falha no fallback:', canvasErr);
+                alert('Não foi possível gerar o download direto. Utilize o botão "Imprimir" e selecione "Salvar como PDF".');
+                btn.innerHTML = `❌ Erro`;
+            }
+        } finally {
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 2500);
+        }
+    }
+
+    function resetAppLocalStorage() {
+        if (confirm("Tem certeza que deseja apagar todos os dados salvos neste navegador? Esta ação não pode ser desfeita.")) {
+            localStorage.removeItem(STORAGE_KEY_STUDENTS);
+            localStorage.removeItem(STORAGE_KEY_CONFIGS);
+            localStorage.removeItem(STORAGE_KEY_VIEW);
+            alert("Dados apagados com sucesso! A página será recarregada.");
+            window.location.reload();
+        }
     }
 
     function switchViewMode(mode) {
@@ -1201,6 +1666,12 @@
         document.getElementById('btnModeDist').classList.toggle('active', mode === 'dist');
         document.getElementById('btnModeZone').classList.toggle('active', mode === 'zone');
         document.getElementById('btnModeTarget').classList.toggle('active', mode === 'target');
+
+        const isTargetMode = (mode === 'target');
+        document.getElementById('filterWeekSelect').style.display = isTargetMode ? 'none' : 'inline-block';
+        document.getElementById('filterTestSelect').style.display = isTargetMode ? 'none' : 'inline-block';
+        document.getElementById('filterStatusSelect').style.display = isTargetMode ? 'none' : 'inline-block';
+        document.getElementById('filterTargetDistanceSelect').style.display = isTargetMode ? 'inline-block' : 'none';
 
         saveData();
         updateTableHeader();
@@ -1249,17 +1720,19 @@
         return `${m}:${s < 10 ? '0' : ''}${s.toFixed(1)}`;
     }
 
+    function formatSecondsToPace(paceSecTotal) {
+        if (!paceSecTotal || isNaN(paceSecTotal) || paceSecTotal <= 0) return '-';
+        let pMin = Math.floor(paceSecTotal / 60);
+        let pSec = Math.round(paceSecTotal % 60);
+        if (pSec >= 60) { pMin += 1; pSec = 0; }
+        return `${pMin}:${pSec < 10 ? '0' : ''}${pSec}`;
+    }
+
     function calculateTargetPace(timeStr, distStr) {
         const totalSec = timeToSeconds(timeStr);
         const distKm = parseDistanceKm(distStr);
         if (!totalSec || !distKm || distKm <= 0) return '-';
-
-        const paceSecTotal = totalSec / distKm;
-        let pMin = Math.floor(paceSecTotal / 60);
-        let pSec = Math.round(paceSecTotal % 60);
-        if (pSec >= 60) { pMin += 1; pSec = 0; }
-
-        return `${pMin}:${pSec < 10 ? '0' : ''}${pSec}/km`;
+        return `${formatSecondsToPace(totalSec / distKm)}/km`;
     }
 
     function formatTimeDisplay(timeStr) {
@@ -1274,20 +1747,15 @@
 
     function calculatePaceFromSplit(splitSec, dist) {
         if (!splitSec || splitSec <= 0) return '-';
-        const paceSec = (splitSec / dist) * 1000;
-        const m = Math.floor(paceSec / 60);
-        const s = Math.round(paceSec % 60);
-        return `${m}:${s < 10 ? '0' : ''}${s}`;
+        return formatSecondsToPace((splitSec / dist) * 1000);
     }
 
     function calculateTestStats(timeSec, testDist) {
         if (!timeSec || !testDist || timeSec <= 0 || testDist <= 0) return { pace: '-', speed: '-' };
         const paceSecTotal = (timeSec / testDist) * 1000;
-        const pMin = Math.floor(paceSecTotal / 60);
-        const pSec = Math.round(paceSecTotal % 60);
         const km = testDist / 1000;
         const hours = timeSec / 3600;
-        return { pace: `${pMin}:${pSec < 10 ? '0' : ''}${pSec}/km`, speed: `${(km / hours).toFixed(2)} km/h` };
+        return { pace: `${formatSecondsToPace(paceSecTotal)}/km`, speed: `${(km / hours).toFixed(2)} km/h` };
     }
 
     function calculatePaceFromVamPct(testSec, testDist, pct) {
@@ -1319,7 +1787,7 @@
 
     function getStudentEvolution(student) {
         const studentTests = students
-            .filter(s => saoNomesIguais(s.name, student.name) && s.testDist === student.testDist)
+            .filter(s => (s.cleanName === student.cleanName || saoNomesIguais(s.name, student.name)) && s.testDist === student.testDist)
             .sort((a, b) => (parseDateString(a.date) || 0) - (parseDateString(b.date) || 0));
 
         const targetKey = buildTestKey(student.name, student.date, student.testDist);
@@ -1378,6 +1846,7 @@
 
     function toggleModal(show) {
         document.getElementById('configModal').classList.toggle('active', show);
+        if (show) renderConfigGrids();
     }
 
     function toggleHistoryModal(show, studentName = '') {
@@ -1481,6 +1950,7 @@
                     <td style="font-size: 0.78rem;">⚡ ${stats.pace}<br>🚀 ${stats.speed}</td>
                     <td style="font-size: 0.75rem; color: var(--text-muted);">${h.obs || '-'}</td>
                     <td>
+                        <button class="btn-icon" onclick="exportStudentCertificate('${key}')" title="Visualizar / Baixar Certificado">🎴 Certificado</button>
                         <button class="btn-icon" onclick="openEditModal('${key}')" title="Editar">✏️</button>
                         <button class="btn-icon btn-danger" onclick="deleteStudent('${key}')" title="Excluir">🗑️</button>
                     </td>
@@ -1509,6 +1979,15 @@
         toggleEditModal(true);
     }
 
+    function isPaceValid(timeSec, testDist) {
+        if (!timeSec || !testDist) return false;
+        const speedKmH = ((testDist / 1000) / (timeSec / 3600));
+        
+        if (speedKmH > 27) return confirm(`Atenção: O tempo resulta em ${speedKmH.toFixed(1)} km/h! Salvar mesmo assim?`);
+        if (speedKmH < 4) return confirm(`Atenção: O tempo resulta em velocidade muito baixa (${speedKmH.toFixed(1)} km/h). Confirmar?`);
+        return true;
+    }
+
     document.getElementById('editStudentForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const originalKey = document.getElementById('editOriginalKey').value;
@@ -1517,11 +1996,16 @@
         if (studentIndex !== -1) {
             const timeStr = document.getElementById('editTestTime').value.trim();
             const sec = timeToSeconds(timeStr);
-            if (!sec) return alert('Tempo inválido.');
+            const dist = parseInt(document.getElementById('editTestDistance').value);
 
+            if (!sec) return alert('Tempo inválido.');
+            if (!isPaceValid(sec, dist)) return;
+
+            const name = document.getElementById('editStudentName').value.trim();
             const updatedStudent = {
-                name: document.getElementById('editStudentName').value.trim(),
-                testDist: parseInt(document.getElementById('editTestDistance').value),
+                name: name,
+                cleanName: normalizarNome(name),
+                testDist: dist,
                 date: document.getElementById('editTestDate').value,
                 timeStr: timeStr,
                 timeSec: sec,
@@ -1592,88 +2076,95 @@
 
     function renderConfigGrids() {
         const containerDist = document.getElementById('pctGridDist');
-        containerDist.innerHTML = '';
-        distanceConfigs.forEach((d, idx) => {
-            const row = document.createElement('div');
-            row.className = 'pct-row';
-            row.innerHTML = `
-                <label style="width: 80px;">${d.dist}m</label>
-                <div class="pct-inputs">
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Mín%</span>
-                    <input type="number" value="${d.min}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="min" class="dist-input">
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Máx%</span>
-                    <input type="number" value="${d.max}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="max" class="dist-input">
+        if (containerDist) {
+            containerDist.innerHTML = distanceConfigs.map((d, idx) => `
+                <div class="pct-row">
+                    <label style="width: 80px;">${d.dist}m</label>
+                    <div class="pct-inputs">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Mín%</span>
+                        <input type="number" value="${d.min}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="min" class="dist-input">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Máx%</span>
+                        <input type="number" value="${d.max}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="max" class="dist-input">
+                    </div>
+                    <button class="btn-icon btn-danger" onclick="removeDistance(${d.dist})">🗑️</button>
                 </div>
-                <button class="btn-icon btn-danger" onclick="removeDistance(${d.dist})">🗑️</button>
-            `;
-            containerDist.appendChild(row);
-        });
-
-        containerDist.querySelectorAll('.dist-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const idx = parseInt(e.target.dataset.idx);
-                const field = e.target.dataset.field;
-                const val = parseFloat(e.target.value);
-                if (!isNaN(val)) {
-                    distanceConfigs[idx][field] = val;
-                    saveData();
-                    if (viewMode === 'dist') renderTable();
-                }
-            });
-        });
+            `).join('');
+        }
 
         const containerZone = document.getElementById('pctGridZone');
-        containerZone.innerHTML = '';
-        zoneConfigs.forEach((z, idx) => {
-            const row = document.createElement('div');
-            row.className = 'pct-row';
-            row.innerHTML = `
-                <input type="text" value="${z.name}" data-idx="${idx}" class="zone-name-input" style="width: 140px; font-weight: 600; color: var(--c4-cyan); padding: 4px 8px;">
-                <div class="pct-inputs">
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Mín%</span>
-                    <input type="number" value="${z.min}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="min" class="zone-input">
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Máx%</span>
-                    <input type="number" value="${z.max}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="max" class="zone-input">
+        if (containerZone) {
+            containerZone.innerHTML = zoneConfigs.map((z, idx) => `
+                <div class="pct-row">
+                    <input type="text" value="${z.name}" data-idx="${idx}" class="zone-name-input" style="width: 140px; font-weight: 600; color: var(--c4-cyan); padding: 4px 8px;">
+                    <div class="pct-inputs">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Mín%</span>
+                        <input type="number" value="${z.min}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="min" class="zone-input">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Máx%</span>
+                        <input type="number" value="${z.max}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="max" class="zone-input">
+                    </div>
+                    <button class="btn-icon btn-danger" onclick="removeZone(${idx})">🗑️</button>
                 </div>
-                <button class="btn-icon btn-danger" onclick="removeZone(${idx})">🗑️</button>
-            `;
-            containerZone.appendChild(row);
-        });
+            `).join('');
+        }
 
-        containerZone.querySelectorAll('.zone-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const idx = parseInt(e.target.dataset.idx);
-                const field = e.target.dataset.field;
-                const val = parseFloat(e.target.value);
-                if (!isNaN(val)) {
-                    zoneConfigs[idx][field] = val;
-                    saveData();
-                    if (viewMode === 'zone') renderTable();
-                }
-            });
-        });
+        const warnInput = document.getElementById('warnDays');
+        if (warnInput) warnInput.value = alertConfig.warnDays;
+        const alertInput = document.getElementById('alertDays');
+        if (alertInput) alertInput.value = alertConfig.alertDays;
+    }
 
-        containerZone.querySelectorAll('.zone-name-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const idx = parseInt(e.target.dataset.idx);
-                zoneConfigs[idx].name = e.target.value.trim();
+    document.getElementById('pctGridDist').addEventListener('change', (e) => {
+        if (e.target.classList.contains('dist-input')) {
+            const idx = parseInt(e.target.dataset.idx);
+            const field = e.target.dataset.field;
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val)) {
+                distanceConfigs[idx][field] = val;
                 saveData();
-                updateTableHeader();
+                if (viewMode === 'dist') renderTable();
+            }
+        }
+    });
+
+    document.getElementById('pctGridZone').addEventListener('change', (e) => {
+        const idx = parseInt(e.target.dataset.idx);
+        if (e.target.classList.contains('zone-input')) {
+            const field = e.target.dataset.field;
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val)) {
+                zoneConfigs[idx][field] = val;
+                saveData();
                 if (viewMode === 'zone') renderTable();
-            });
-        });
-
-        document.getElementById('alertWarnDaysInput').addEventListener('change', (e) => {
-            alertConfig.warnDays = parseInt(e.target.value) || 60;
+            }
+        } else if (e.target.classList.contains('zone-name-input')) {
+            zoneConfigs[idx].name = e.target.value.trim();
             saveData();
-            renderTable();
-        });
+            updateTableHeader();
+            if (viewMode === 'zone') renderTable();
+        }
+    });
 
-        document.getElementById('alertAlertDaysInput').addEventListener('change', (e) => {
-            alertConfig.alertDays = parseInt(e.target.value) || 90;
-            saveData();
-            renderTable();
-        });
+    document.getElementById('btnSaveConfig').addEventListener('click', () => {
+        alertConfig.warnDays = parseInt(document.getElementById('warnDays').value) || 30;
+        alertConfig.alertDays = parseInt(document.getElementById('alertDays').value) || 60;
+        saveData();
+        renderTable();
+        toggleModal(false);
+    });
+
+    function handleSort(col) {
+        if (sortColumn === col) {
+            sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
+        } else {
+            sortColumn = col;
+            sortDirection = 'asc';
+        }
+        renderTable();
+    }
+
+    function getSortIcon(col) {
+        if (sortColumn !== col) return ' ↕️';
+        return sortDirection === 'asc' ? ' 🔼' : ' 🔽';
     }
 
     function updateTableHeader() {
@@ -1682,10 +2173,10 @@
 
         if (viewMode === 'target') {
             html = `
-                <th>Atleta</th>
+                <th class="sortable" onclick="handleSort('name')">Atleta${getSortIcon('name')}</th>
                 <th>Prova Alvo</th>
                 <th>Distância</th>
-                <th>Data Prova</th>
+                <th class="sortable" onclick="handleSort('date')">Data Prova${getSortIcon('date')}</th>
                 <th>Tempo Alvo</th>
                 <th>Pace Necessário</th>
                 <th>Capacidade (Teste)</th>
@@ -1693,8 +2184,8 @@
         } else if (viewMode === 'zone') {
             html = `
                 <th style="width: 50px;">Ordem</th>
-                <th>Aluno</th>
-                <th style="text-align: center;">Teste / Data</th>
+                <th class="sortable" onclick="handleSort('name')">Aluno${getSortIcon('name')}</th>
+                <th class="sortable" onclick="handleSort('date')" style="text-align: center;">Teste / Data${getSortIcon('date')}</th>
             `;
             zoneConfigs.forEach(z => {
                 html += `<th>${z.name}<br><span style="font-size: 0.65rem; color: var(--c4-cyan); font-weight: normal;">(${z.min}% - ${z.max}%)</span></th>`;
@@ -1703,8 +2194,8 @@
         } else {
             html = `
                 <th style="width: 50px;">Ordem</th>
-                <th>Aluno</th>
-                <th style="text-align: center;">Teste / Data</th>
+                <th class="sortable" onclick="handleSort('name')">Aluno${getSortIcon('name')}</th>
+                <th class="sortable" onclick="handleSort('date')" style="text-align: center;">Teste / Data${getSortIcon('date')}</th>
             `;
             distanceConfigs.forEach(d => {
                 html += `<th>${d.dist}m<br><span style="font-size: 0.65rem; color: var(--c4-cyan); font-weight: normal;">(${d.min}% - ${d.max}%)</span></th>`;
@@ -1723,13 +2214,14 @@
         }
 
         const tbody = document.getElementById('studentTableBody');
-        const searchQuery = document.getElementById('searchInput').value.trim();
+        const searchInputVal = document.getElementById('searchInput').value.trim();
+        const searchNorm = normalizarNome(searchInputVal);
         const selectedTestFilter = document.getElementById('filterTestSelect').value;
         const selectedWeekFilter = document.getElementById('filterWeekSelect').value;
         const selectedStatusFilter = document.getElementById('filterStatusSelect').value;
 
-        const filteredStudents = students.filter(student => {
-            const matchesName = !searchQuery || saoNomesIguais(student.name, searchQuery) || student.name.toLowerCase().includes(searchQuery.toLowerCase());
+        let filteredStudents = students.filter(student => {
+            const matchesName = !searchNorm || student.cleanName.includes(searchNorm) || saoNomesIguais(student.name, searchInputVal);
             const matchesTest = selectedTestFilter === 'all' || student.testDist.toString() === selectedTestFilter;
             const weekObj = getWeekRangeObject(student.date);
             const matchesWeek = selectedWeekFilter === 'all' || (weekObj && weekObj.label === selectedWeekFilter);
@@ -1738,6 +2230,23 @@
 
             return matchesName && matchesTest && matchesWeek && matchesStatus;
         });
+
+        if (sortColumn) {
+            filteredStudents.sort((a, b) => {
+                let valA, valB;
+                if (sortColumn === 'name') {
+                    valA = a.cleanName;
+                    valB = b.cleanName;
+                } else if (sortColumn === 'date') {
+                    valA = parseDateString(a.date) || 0;
+                    valB = parseDateString(b.date) || 0;
+                }
+
+                if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
 
         const colCount = (viewMode === 'zone' ? zoneConfigs.length : distanceConfigs.length) + 4;
 
@@ -1820,6 +2329,7 @@
                     ${dataCells}
                     <td style="text-align: center;">
                         <div style="display: flex; gap: 4px; justify-content: center;">
+                            <button class="btn-icon" onclick="exportStudentCertificate('${key}')" title="Visualizar / Baixar Certificado">🎴</button>
                             <button class="btn-icon" onclick="openEditModal('${key}')">✏️</button>
                             <button class="btn-icon btn-danger" onclick="deleteStudent('${key}')">🗑️</button>
                         </div>
@@ -1841,11 +2351,35 @@
         }
 
         const searchQuery = document.getElementById('searchInput').value.trim();
-        const filteredRaces = targetRacesData.filter(item => {
-            const nameMatch = !searchQuery || saoNomesIguais(item.nome || '', searchQuery) || (item.nome || '').toLowerCase().includes(searchQuery.toLowerCase());
+        const searchNorm = normalizarNome(searchQuery);
+        const selectedTargetDist = document.getElementById('filterTargetDistanceSelect').value;
+
+        let filteredRaces = targetRacesData.filter(item => {
+            const nameNorm = normalizarNome(item.nome || '');
+            const nameMatch = !searchNorm || nameNorm.includes(searchNorm) || saoNomesIguais(item.nome || '', searchQuery);
             const raceMatch = (item.prova || '').toLowerCase().includes(searchQuery.toLowerCase());
-            return nameMatch || raceMatch;
+            const raceDistStr = String(item.distancia || '').trim();
+            const distMatch = selectedTargetDist === 'all' || raceDistStr === selectedTargetDist;
+
+            return (nameMatch || raceMatch) && distMatch;
         });
+
+        if (sortColumn) {
+            filteredRaces.sort((a, b) => {
+                let valA, valB;
+                if (sortColumn === 'name') {
+                    valA = (a.nome || '').toLowerCase();
+                    valB = (b.nome || '').toLowerCase();
+                } else if (sortColumn === 'date') {
+                    valA = parseDateString(a.dataProva) || 0;
+                    valB = parseDateString(b.dataProva) || 0;
+                }
+
+                if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
 
         if (filteredRaces.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">Nenhum registro de Prova Alvo encontrado.</div></td></tr>`;
@@ -1858,7 +2392,6 @@
         filteredRaces.forEach(item => {
             const tempoBruto = String(item.tempoAlvo || '').trim();
             const distanciaBruta = String(item.distancia || '').trim();
-
             const targetPaceFormatted = calculateTargetPace(tempoBruto, distanciaBruta);
             const targetSec = timeToSeconds(tempoBruto);
             const distKm = parseDistanceKm(distanciaBruta);
@@ -1927,11 +2460,16 @@
     document.getElementById('addStudentForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const sec = timeToSeconds(document.getElementById('testTime').value.trim());
-        if (!sec) return alert('Tempo em formato MM:SS inválido.');
+        const dist = parseInt(document.getElementById('testDistance').value);
 
+        if (!sec) return alert('Tempo em formato MM:SS inválido.');
+        if (!isPaceValid(sec, dist)) return;
+
+        const name = document.getElementById('studentName').value.trim();
         const newStudent = {
-            name: document.getElementById('studentName').value.trim(),
-            testDist: parseInt(document.getElementById('testDistance').value),
+            name: name,
+            cleanName: normalizarNome(name),
+            testDist: dist,
             date: document.getElementById('testDate').value,
             timeStr: document.getElementById('testTime').value.trim(),
             timeSec: sec,
@@ -1958,15 +2496,16 @@
         }, 150);
     });
 
-    document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
 
-    loadFromLocalStorage();
-    renderConfigGrids();
-    updateTableHeader();
-    updateWeekFilterOptions();
-    renderTable();
+        loadFromLocalStorage();
+        updateTableHeader();
+        updateWeekFilterOptions();
+        switchViewMode(viewMode);
 
-    setTimeout(syncWithGoogleSheets, 300);
+        setTimeout(syncWithGoogleSheets, 300);
+    });
 </script>
 
 </body>
