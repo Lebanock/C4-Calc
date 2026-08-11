@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Pace C4 - Pista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #080d1a;
+            --bg-card: #0f172a;
+            --bg-input: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --c4-cyan: #38bdf8;
+            --c4-blue: #0284c7;
+            --c4-glow: #0ea5e9;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --border: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            padding: 24px;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.15), transparent 70%);
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            padding: 10px 0 20px 0;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-badge {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -1px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.4);
+            border: 2px solid #7dd3fc;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, var(--c4-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-gear {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--c4-cyan);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+        }
+
+        .btn-gear:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--c4-cyan);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(14, 165, 233, 0.05);
+            min-width: 0;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--c4-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible-content {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(56, 189, 248, 0.15);
+        }
+
+        .collapsible-content.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background-color: var(--bg-input);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+            border-color: var(--c4-cyan);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--c4-glow) 0%, var(--c4-blue) 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            box-shadow: 0 6px 18px rgba(14, 165, 233, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: var(--c4-cyan);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(56, 189, 248, 0.15);
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            color: var(--c4-cyan);
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        .btn-danger:hover {
+            color: var(--danger);
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .toolbar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px;
+        }
+
+        @media (min-width: 992px) {
+            .toolbar-container {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .filters-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            width: 150px;
+        }
+
+        .search-box input {
+            padding-left: 28px;
+            padding-right: 8px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            font-size: 0.82rem;
+            height: 34px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+
+        .filter-select {
+            padding: 4px 8px;
+            font-size: 0.82rem;
+            height: 34px;
+            width: auto;
+            min-width: 90px;
+        }
+
+        .view-mode-bar {
+            display: flex;
+            background: var(--bg-input);
+            padding: 3px;
+            border-radius: 8px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            gap: 3px;
+        }
+
+        .view-mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .view-mode-btn.active {
+            background: var(--c4-glow);
+            color: #ffffff;
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(8, 13, 26, 0.85);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 25px rgba(14, 165, 233, 0.2);
+            transform: translateY(-20px);
+            transition: transform 0.2s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            color: var(--c4-cyan);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+        }
+
+        .config-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .config-tab {
+            background: var(--bg-input);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .config-tab.active {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: var(--c4-cyan);
+            color: var(--c4-cyan);
+        }
+
+        .config-pane {
+            display: none;
+        }
+
+        .config-pane.active {
+            display: block;
+        }
+
+        .pct-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .pct-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-input);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pct-row label {
+            font-weight: 600;
+            color: var(--c4-cyan);
+            min-width: 100px;
+            margin-bottom: 0;
+        }
+
+        .pct-inputs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .pct-inputs input {
+            text-align: center;
+            padding: 6px;
+            font-weight: 700;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            margin-bottom: 20px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+        }
+
+        .scrollbar-proxy {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            height: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .scrollbar-proxy-content {
+            height: 1px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-responsive::-webkit-scrollbar, .scrollbar-proxy::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track, .scrollbar-proxy::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb, .scrollbar-proxy::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.3);
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover, .scrollbar-proxy::-webkit-scrollbar-thumb:hover {
+            background: var(--c4-cyan);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.88rem;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            letter-spacing: 0.5px;
+        }
+
+        th:nth-child(2), td:nth-child(2) {
+            text-align: left;
+        }
+
+        tr:hover {
+            background-color: rgba(56, 189, 248, 0.03);
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: var(--c4-cyan);
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 4px;
+            transition: color 0.2s;
+        }
+
+        .student-name:hover {
+            color: #7dd3fc;
+        }
+
+        .test-info {
+            color: var(--c4-cyan);
+            font-weight: 600;
+        }
+
+        .test-stats {
+            font-size: 0.73rem;
+            color: var(--c4-cyan);
+            font-weight: 500;
+            margin-top: 3px;
+        }
+
+        .test-cell-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .test-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .test-badge {
+            font-size: 0.72rem;
+            background-color: rgba(56, 189, 248, 0.15);
+            color: var(--c4-cyan);
+            padding: 2px 5px;
+            border-radius: 4px;
+            margin-left: 2px;
+        }
+
+        .status-tag {
+            font-size: 0.68rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .status-ok { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-warn { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .status-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        .evolution-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+        .evolution-better { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .evolution-worse { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .evolution-equal { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+
+        .time-badge {
+            background-color: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 95px;
+        }
+
+        .time-val {
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .pace-val {
+            font-size: 0.68rem;
+            color: #7dd3fc;
+            font-weight: 500;
+            margin-top: 1px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .save-indicator {
+            font-size: 0.78rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .btn-action {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: var(--c4-cyan);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+        }
+
+        .btn-action:hover {
+            background: rgba(56, 189, 248, 0.25);
+            border-color: var(--c4-cyan);
+        }
+
+        .obs-tooltip {
+            cursor: help;
+            border-bottom: 1px dotted var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo-container">
+           <img src="logo.png" alt="Logo C4" class="logo-img">
+            <div>
+                <h1>Calculadora de Pace C4</h1>
+                <p>Gerenciamento, Histórico e Evolução de Testes de Pista</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-action" onclick="toggleAddForm()">➕ Registrar Teste</button>
+            <button class="btn-action" onclick="exportToExcel()">📊 Exportar Excel</button>
+            <button class="btn-gear" onclick="toggleModal(true)">⚙️ Configurações</button>
+        </div>
+    </header>
+
+    <div class="card" id="addFormCard" style="display: none;">
+        <div class="card-title" onclick="toggleAddForm()">
+            <span>➕ Registrar Novo Teste</span>
+            <span id="formToggleIcon" style="font-size: 0.9rem;">▲ Ocultar</span>
+        </div>
+        <div class="collapsible-content active" id="addFormContent">
+            <form id="addStudentForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="studentName">Nome do Aluno</label>
+                        <input type="text" id="studentName" placeholder="Ex: Carlos Silva" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="testDistance">Distância do Teste</label>
+                        <select id="testDistance" required>
+                            <option value="1000">1.000m (1km)</option>
+                            <option value="2400">2.400m (2.4km)</option>
+                            <option value="3000" selected>3.000m (3km)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="testDate">Data do Teste</label>
+                        <input type="date" id="testDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="testTime">Tempo no Teste (MM:SS)</label>
+                        <input type="text" id="testTime" placeholder="Ex: 11:30" required pattern="^[0-9]{1,2}:[0-5][0-9](\.[0-9]{1,2})?$">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 10px;">
+                    <label for="testObs">Observações / Condições (Opcional)</label>
+                    <textarea id="testObs" placeholder="Ex: Vento forte, pista molhada, pós-lesão..."></textarea>
+                </div>
+
+                <button type="submit" class="btn" style="margin-top: 10px;">Salvar Teste</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <div class="toolbar-container">
+            <div class="filters-group">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Nome...">
+                </div>
+                <select id="filterWeekSelect" class="filter-select" onchange="renderTable()">
+                    <option value="all">Semanas</option>
+                </select>
+                <select id="filterTestSelect" class="filter-select" onchange="renderTable()">
+                    <option value="all">Testes</option>
+                    <option value="1000">1.000m</option>
+                    <option value="2400">2.400m</option>
+                    <option value="3000">3.000m</option>
+                </select>
+                <select id="filterStatusSelect" class="filter-select" onchange="renderTable()">
+                    <option value="all">Status</option>
+                    <option value="ok">🟢 Recentes</option>
+                    <option value="warn">🟡 Atenção</option>
+                    <option value="alert">🔴 Vencidos</option>
+                </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <div class="view-mode-bar">
+                    <button class="view-mode-btn active" id="btnModeDist" onclick="switchViewMode('dist')">Por Distância</button>
+                    <button class="view-mode-btn" id="btnModeZone" onclick="switchViewMode('zone')">Por Zonas</button>
+                    <button class="view-mode-btn" id="btnModeTarget" onclick="switchViewMode('target')">🎯 Provas Alvo</button>
+                </div>
+                <button class="btn-action" id="btnRefreshForms" onclick="syncWithGoogleSheets()" style="display: flex;" title="Sincronizar com Google Sheets">
+                    🔄 Sheets
+                </button>
+                <span class="save-indicator" id="saveStatus">💾 Salvo</span>
+            </div>
+        </div>
+        
+        <div class="scrollbar-proxy" id="scrollbarProxy" onscroll="syncScroll('proxy')">
+            <div class="scrollbar-proxy-content" id="scrollbarProxyContent"></div>
+        </div>
+
+        <div class="table-responsive" id="tableResponsive" onscroll="syncScroll('table')">
+            <table>
+                <thead>
+                    <tr id="tableHeaderRow"></tr>
+                </thead>
+                <tbody id="studentTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Configurações -->
+<div class="modal-overlay" id="configModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>⚙️ Configurações do Sistema</h2>
+            <button class="close-btn" onclick="toggleModal(false)">&times;</button>
+        </div>
+        
+        <div class="config-tabs">
+            <button class="config-tab active" onclick="switchConfigTab('dist')">Distâncias de Treino</button>
+            <button class="config-tab" onclick="switchConfigTab('zone')">Zonas de Intensidade</button>
+            <button class="config-tab" onclick="switchConfigTab('alert')">Alertas e Validade</button>
+        </div>
+
+        <div class="config-pane active" id="paneDist">
+            <p class="hint" style="margin-bottom: 12px;">Metragens e porcentagens (%).</p>
+            <div class="pct-grid" id="pctGridDist"></div>
+            <button class="btn btn-secondary" onclick="addNewDistance()" style="margin-bottom: 20px;">➕ Adicionar Nova Distância</button>
+        </div>
+
+        <div class="config-pane" id="paneZone">
+            <p class="hint" style="margin-bottom: 12px;">Zonas e porcentagens (%) de VAM.</p>
+            <div class="pct-grid" id="pctGridZone"></div>
+            <button class="btn btn-secondary" onclick="addNewZone()" style="margin-bottom: 20px;">➕ Adicionar Nova Zona</button>
+        </div>
+
+        <div class="config-pane" id="paneAlert">
+            <p class="hint" style="margin-bottom: 16px;">Dias de validade dos testes.</p>
+            <div class="pct-grid">
+                <div class="pct-row">
+                    <label>🟡 Status Atenção (dias)</label>
+                    <div class="pct-inputs">
+                        <input type="number" id="alertWarnDaysInput" min="1" max="365" style="width: 100px;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">dias após o teste</span>
+                    </div>
+                </div>
+                <div class="pct-row">
+                    <label>🔴 Status Vencido (dias)</label>
+                    <div class="pct-inputs">
+                        <input type="number" id="alertAlertDaysInput" min="1" max="365" style="width: 100px;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">dias após o teste</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="toggleModal(false)">Salvar & Fechar</button>
+    </div>
+</div>
+
+<!-- Modal Histórico -->
+<div class="modal-overlay" id="historyModal">
+    <div class="modal" style="max-width: 750px;">
+        <div class="modal-header">
+            <h2 id="historyModalTitle">📊 Histórico do Aluno</h2>
+            <button class="close-btn" onclick="toggleHistoryModal(false)">&times;</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 0.88rem; font-weight: 600; color: var(--c4-cyan);">Evolução nos Testes</span>
+            <select id="chartDistanceSelect" class="filter-select" onchange="renderHistoryChart()" style="min-width: 160px; padding: 4px 8px; font-size: 0.8rem;"></select>
+        </div>
+        <div class="chart-container">
+            <canvas id="evolutionChart"></canvas>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Distância</th>
+                        <th>Tempo</th>
+                        <th>Pace / VAM</th>
+                        <th>Obs.</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody"></tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+            <button class="btn" style="width: auto; display: inline-flex;" onclick="toggleHistoryModal(false)">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edição -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2>✏️ Editar Registro de Teste</h2>
+            <button class="close-btn" onclick="toggleEditModal(false)">&times;</button>
+        </div>
+        <form id="editStudentForm">
+            <input type="hidden" id="editOriginalKey">
+            <div class="form-group">
+                <label for="editStudentName">Nome do Aluno</label>
+                <input type="text" id="editStudentName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="editTestDistance">Distância do Teste</label>
+                <select id="editTestDistance" required>
+                    <option value="1000">1.000m (1km)</option>
+                    <option value="2400">2.400m (2.4km)</option>
+                    <option value="3000">3.000m (3km)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="editTestDate">Data do Teste</label>
+                <input type="date" id="editTestDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editTestTime">Tempo no Teste (MM:SS)</label>
+                <input type="text" id="editTestTime" required pattern="^[0-9]{1,2}:[0-5][0-9](\.[0-9]{1,2})?$">
+            </div>
+
+            <div class="form-group">
+                <label for="editTestObs">Observações / Condições</label>
+                <textarea id="editTestObs"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Atualizar Registro</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxR6GHIOHdVu8IImzTO7oAgXz_5_xL80jOgFsn_nMwjUIFES6M9OfaPCFYftXAs0Tg/exec';
+
+    let targetRacesData = [];
+    let isFetchingTargetRaces = false;
+
+    let distanceConfigs = [
+        { dist: 200, min: 105, max: 115 },
+        { dist: 400, min: 103, max: 112 },
+        { dist: 600, min: 102, max: 110 },
+        { dist: 800, min: 101, max: 108 },
+        { dist: 1000, min: 98, max: 102 },
+        { dist: 1600, min: 95, max: 100 },
+        { dist: 2000, min: 93, max: 98 }
+    ];
+
+    let zoneConfigs = [
+        { name: 'Z1 - Regenerativo', min: 60, max: 70 },
+        { name: 'Z2 - Endurance', min: 70, max: 80 },
+        { name: 'Z3 - Limiar', min: 80, max: 90 },
+        { name: 'Z4 - VO2 Máx', min: 90, max: 100 },
+        { name: 'Z5 - Anaeróbico', min: 100, max: 115 }
+    ];
+
+    let alertConfig = { warnDays: 60, alertDays: 90 };
+    let viewMode = 'dist';
+    let students = [];
+    let currentHistoryStudentName = '';
+    let myChartInstance = null;
+
+    const STORAGE_KEY_STUDENTS = 'c4_pace_students_v10';
+    const STORAGE_KEY_DIST_CFG = 'c4_pace_dist_cfg_v10';
+    const STORAGE_KEY_ZONE_CFG = 'c4_pace_zone_cfg_v10';
+    const STORAGE_KEY_VIEW = 'c4_pace_view_v10';
+    const STORAGE_KEY_ALERTS = 'c4_pace_alerts_v10';
+
+    // Normalização ultraleve para padronizar nomes
+    function normalizarNome(nome) {
+        if (!nome) return '';
+        return String(nome)
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/\b(de|da|dos|das|e)\b/g, '') // remove conectores comuns
+            .replace(/[^a-z0-9\s]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    // Reconhecimento leve e rápido de nomes semelhantes
+    function saoNomesIguais(nome1, nome2) {
+        const n1 = normalizarNome(nome1);
+        const n2 = normalizarNome(nome2);
+        if (n1 === n2) return true;
+        if (!n1 || !n2) return false;
+
+        // Se um nome contiver completamente o outro (ex: "Carlos Silva" e "Carlos Silva Junior")
+        if (n1.includes(n2) || n2.includes(n1)) return true;
+
+        const palavras1 = n1.split(' ').filter(w => w.length > 1);
+        const palavras2 = n2.split(' ').filter(w => w.length > 1);
+
+        if (palavras1.length === 0 || palavras2.length === 0) return false;
+
+        // Verifica intersecção de palavras importantes (primeiro e último nome)
+        const interseccao = palavras1.filter(p => palavras2.includes(p));
+        const menorTamanho = Math.min(palavras1.length, palavras2.length);
+
+        // Considera semelhante se compartilharem a maioria das palavras
+        return (interseccao.length / menorTamanho) >= 0.7;
+    }
+
+    function buildTestKey(name, dateStr, dist) {
+        return `${normalizarNome(name)}_${String(dateStr).trim()}_${dist}`;
+    }
+
+    let isSyncingScroll = false;
+    function syncScroll(source) {
+        if (isSyncingScroll) return;
+        isSyncingScroll = true;
+
+        requestAnimationFrame(() => {
+            const proxy = document.getElementById('scrollbarProxy');
+            const tableResp = document.getElementById('tableResponsive');
+            if (source === 'proxy') {
+                tableResp.scrollLeft = proxy.scrollLeft;
+            } else {
+                proxy.scrollLeft = tableResp.scrollLeft;
+            }
+            isSyncingScroll = false;
+        });
+    }
+
+    function parseDateString(dateStr) {
+        if (!dateStr) return null;
+        let str = String(dateStr).trim().split('T')[0].split(' ')[0];
+        
+        if (str.includes('/')) {
+            const parts = str.split('/');
+            if (parts.length === 3) return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+        if (str.includes('-')) {
+            const parts = str.split('-');
+            if (parts.length === 3) return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+        const d = new Date(str);
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    function loadFromLocalStorage() {
+        const savedView = localStorage.getItem(STORAGE_KEY_VIEW);
+        if (savedView) viewMode = savedView;
+
+        document.getElementById('btnModeDist').classList.toggle('active', viewMode === 'dist');
+        document.getElementById('btnModeZone').classList.toggle('active', viewMode === 'zone');
+        document.getElementById('btnModeTarget').classList.toggle('active', viewMode === 'target');
+
+        const savedDist = localStorage.getItem(STORAGE_KEY_DIST_CFG);
+        if (savedDist) try { distanceConfigs = JSON.parse(savedDist); } catch(e) {}
+
+        const savedZone = localStorage.getItem(STORAGE_KEY_ZONE_CFG);
+        if (savedZone) try { zoneConfigs = JSON.parse(savedZone); } catch(e) {}
+
+        const savedAlerts = localStorage.getItem(STORAGE_KEY_ALERTS);
+        if (savedAlerts) try { alertConfig = JSON.parse(savedAlerts); } catch(e) {}
+
+        document.getElementById('alertWarnDaysInput').value = alertConfig.warnDays;
+        document.getElementById('alertAlertDaysInput').value = alertConfig.alertDays;
+
+        const savedStudents = localStorage.getItem(STORAGE_KEY_STUDENTS);
+        if (savedStudents) try { students = JSON.parse(savedStudents); } catch(e) {}
+    }
+
+    function saveData() {
+        localStorage.setItem(STORAGE_KEY_DIST_CFG, JSON.stringify(distanceConfigs));
+        localStorage.setItem(STORAGE_KEY_ZONE_CFG, JSON.stringify(zoneConfigs));
+        localStorage.setItem(STORAGE_KEY_VIEW, viewMode);
+        localStorage.setItem(STORAGE_KEY_ALERTS, JSON.stringify(alertConfig));
+        localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
+        document.getElementById('saveStatus').innerHTML = `💾 Salvo`;
+    }
+
+    function toggleAddForm() {
+        const card = document.getElementById('addFormCard');
+        card.style.display = (card.style.display === 'none' || card.style.display === '') ? 'block' : 'none';
+        if (card.style.display === 'block') card.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function sendStudentToSheets(studentRecord) {
+        if (!GOOGLE_SHEETS_WEB_APP_URL) return;
+        fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(studentRecord)
+        }).catch(err => console.error('Erro envio Sheets:', err));
+    }
+
+    function syncWithGoogleSheets() {
+        if (!GOOGLE_SHEETS_WEB_APP_URL) return;
+
+        isFetchingTargetRaces = true;
+        const statusSpan = document.getElementById('saveStatus');
+        statusSpan.innerHTML = `🔄 Sincronizando...`;
+
+        fetch(GOOGLE_SHEETS_WEB_APP_URL)
+            .then(res => res.json())
+            .then(data => {
+                isFetchingTargetRaces = false;
+
+                if (data.provasAlvo && Array.isArray(data.provasAlvo)) {
+                    targetRacesData = data.provasAlvo;
+                } else if (Array.isArray(data)) {
+                    targetRacesData = data;
+                }
+
+                if (data.testes && Array.isArray(data.testes)) {
+                    const updatedStudents = [];
+
+                    data.testes.forEach(remoteTest => {
+                        const name = remoteTest.name || remoteTest.nome;
+                        const dist = parseInt(remoteTest.testDist || remoteTest.distancia);
+                        const date = remoteTest.date || remoteTest.data || remoteTest.dataTeste || '';
+                        const timeStr = remoteTest.timeStr || remoteTest.tempo;
+                        const sec = timeToSeconds(timeStr);
+
+                        if (name && dist) {
+                            updatedStudents.push({
+                                name: name,
+                                testDist: dist,
+                                date: date,
+                                timeStr: timeStr,
+                                timeSec: sec || remoteTest.timeSec,
+                                obs: remoteTest.obs || remoteTest.observacoes || ''
+                            });
+                        }
+                    });
+
+                    if (updatedStudents.length > 0) {
+                        students = updatedStudents;
+                    }
+
+                    saveData();
+                    updateWeekFilterOptions();
+                }
+
+                statusSpan.innerHTML = `☁️ Sincronizado`;
+                renderTable();
+            })
+            .catch(err => {
+                console.error(err);
+                isFetchingTargetRaces = false;
+                statusSpan.innerHTML = `❌ Erro Sync`;
+                renderTable();
+            });
+    }
+
+    function exportToExcel() {
+        if (students.length === 0 && targetRacesData.length === 0) return alert('Sem dados para exportar.');
+
+        const wb = XLSX.utils.book_new();
+        const testsData = students.map(s => {
+            const stats = calculateTestStats(s.timeSec, s.testDist);
+            return {
+                'Nome do Aluno': s.name,
+                'Distância (m)': s.testDist,
+                'Data do Teste': formatDate(s.date),
+                'Tempo (MM:SS)': formatTimeDisplay(s.timeStr),
+                'Pace (/km)': stats.pace,
+                'Velocidade (km/h)': stats.speed,
+                'Observações': s.obs || ''
+            };
+        });
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(testsData), "Testes de Pista");
+
+        const racesData = targetRacesData.map(r => ({
+            'Atleta': r.nome || '',
+            'Prova Alvo': r.prova || '',
+            'Distância': String(r.distancia || '').trim(),
+            'Data da Prova': formatDate(r.dataProva) || '',
+            'Tempo Alvo': formatTimeDisplay(String(r.tempoAlvo || '').trim()),
+            'Pace Necessário': calculateTargetPace(String(r.tempoAlvo || '').trim(), String(r.distancia || '').trim())
+        }));
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(racesData), "Provas Alvo");
+
+        XLSX.writeFile(wb, `c4_pace_dados_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+
+    function switchViewMode(mode) {
+        viewMode = mode;
+        document.getElementById('btnModeDist').classList.toggle('active', mode === 'dist');
+        document.getElementById('btnModeZone').classList.toggle('active', mode === 'zone');
+        document.getElementById('btnModeTarget').classList.toggle('active', mode === 'target');
+
+        saveData();
+        updateTableHeader();
+        
+        if (mode === 'target' && targetRacesData.length === 0) syncWithGoogleSheets();
+        else renderTable();
+    }
+
+    function switchConfigTab(tab) {
+        document.querySelectorAll('.config-tab').forEach((el, idx) => {
+            el.classList.toggle('active', (idx === 0 && tab === 'dist') || (idx === 1 && tab === 'zone') || (idx === 2 && tab === 'alert'));
+        });
+        document.getElementById('paneDist').classList.toggle('active', tab === 'dist');
+        document.getElementById('paneZone').classList.toggle('active', tab === 'zone');
+        document.getElementById('paneAlert').classList.toggle('active', tab === 'alert');
+    }
+
+    function timeToSeconds(timeStr) {
+        if (!timeStr) return null;
+        const str = String(timeStr).trim().replace(',', '.');
+        if (!isNaN(str) && !str.includes(':')) return parseFloat(str);
+
+        const parts = str.split(':');
+        if (parts.length === 3) return (parseFloat(parts[0]) || 0) * 3600 + (parseFloat(parts[1]) || 0) * 60 + (parseFloat(parts[2]) || 0);
+        if (parts.length === 2) return (parseFloat(parts[0]) || 0) * 60 + (parseFloat(parts[1]) || 0);
+        return null;
+    }
+
+    function parseDistanceKm(distStr) {
+        if (!distStr) return 0;
+        let clean = String(distStr).toLowerCase().replace(',', '.').trim();
+        if (clean.includes('m') && !clean.includes('k')) {
+            const numMeters = parseFloat(clean.replace('m', ''));
+            return isNaN(numMeters) ? 0 : numMeters / 1000;
+        }
+        clean = clean.replace('km', '').replace('k', '').trim();
+        const num = parseFloat(clean);
+        return isNaN(num) ? 0 : num;
+    }
+
+    function secondsToFormatted(sec) {
+        if (isNaN(sec) || sec <= 0) return '-';
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        if (m === 0) return `${s.toFixed(1)}s`;
+        return `${m}:${s < 10 ? '0' : ''}${s.toFixed(1)}`;
+    }
+
+    function calculateTargetPace(timeStr, distStr) {
+        const totalSec = timeToSeconds(timeStr);
+        const distKm = parseDistanceKm(distStr);
+        if (!totalSec || !distKm || distKm <= 0) return '-';
+
+        const paceSecTotal = totalSec / distKm;
+        let pMin = Math.floor(paceSecTotal / 60);
+        let pSec = Math.round(paceSecTotal % 60);
+        if (pSec >= 60) { pMin += 1; pSec = 0; }
+
+        return `${pMin}:${pSec < 10 ? '0' : ''}${pSec}/km`;
+    }
+
+    function formatTimeDisplay(timeStr) {
+        if (!timeStr) return '-';
+        const parts = String(timeStr).trim().split(':');
+        return (parts.length === 3 && parts[0] === '00') ? `${parts[1]}:${parts[2]}` : String(timeStr).trim();
+    }
+
+    function calculateSplit(testSec, testDist, dist, pct) {
+        return ((testSec / testDist) * dist) / (pct / 100);
+    }
+
+    function calculatePaceFromSplit(splitSec, dist) {
+        if (!splitSec || splitSec <= 0) return '-';
+        const paceSec = (splitSec / dist) * 1000;
+        const m = Math.floor(paceSec / 60);
+        const s = Math.round(paceSec % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function calculateTestStats(timeSec, testDist) {
+        if (!timeSec || !testDist || timeSec <= 0 || testDist <= 0) return { pace: '-', speed: '-' };
+        const paceSecTotal = (timeSec / testDist) * 1000;
+        const pMin = Math.floor(paceSecTotal / 60);
+        const pSec = Math.round(paceSecTotal % 60);
+        const km = testDist / 1000;
+        const hours = timeSec / 3600;
+        return { pace: `${pMin}:${pSec < 10 ? '0' : ''}${pSec}/km`, speed: `${(km / hours).toFixed(2)} km/h` };
+    }
+
+    function calculatePaceFromVamPct(testSec, testDist, pct) {
+        return ((testSec / testDist) * 1000) / (pct / 100);
+    }
+
+    function formatDate(dateStr) {
+        const d = parseDateString(dateStr);
+        if (!d) return dateStr || '-';
+        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    function getTestStatus(dateStr) {
+        if (!dateStr) return { class: 'status-alert', label: 'Sem Data', key: 'alert' };
+        const testDate = parseDateString(dateStr);
+        if (!testDate) return { class: 'status-alert', label: 'Data Inválida', key: 'alert' };
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        testDate.setHours(0, 0, 0, 0);
+
+        const diffDays = Math.floor((today - testDate) / 86400000);
+        if (isNaN(diffDays)) return { class: 'status-alert', label: 'Data Inválida', key: 'alert' };
+
+        if (diffDays <= alertConfig.warnDays) return { class: 'status-ok', label: 'Recente', key: 'ok' };
+        if (diffDays <= alertConfig.alertDays) return { class: 'status-warn', label: `${diffDays}d`, key: 'warn' };
+        return { class: 'status-alert', label: `Vencido (${diffDays}d)`, key: 'alert' };
+    }
+
+    function getStudentEvolution(student) {
+        const studentTests = students
+            .filter(s => saoNomesIguais(s.name, student.name) && s.testDist === student.testDist)
+            .sort((a, b) => (parseDateString(a.date) || 0) - (parseDateString(b.date) || 0));
+
+        const targetKey = buildTestKey(student.name, student.date, student.testDist);
+        const currentIndex = studentTests.findIndex(s => buildTestKey(s.name, s.date, s.testDist) === targetKey);
+        
+        if (currentIndex <= 0) return null;
+
+        const previousTest = studentTests[currentIndex - 1];
+        const diffSec = student.timeSec - previousTest.timeSec;
+        const pctChange = ((diffSec / previousTest.timeSec) * 100).toFixed(1);
+
+        if (diffSec < 0) return { text: `${secondsToFormatted(Math.abs(diffSec))} (${pctChange}%)`, type: 'better' };
+        if (diffSec > 0) return { text: `+${secondsToFormatted(diffSec)} (+${pctChange}%)`, type: 'worse' };
+        return { text: 'Manteve tempo', type: 'equal' };
+    }
+
+    function getWeekRangeObject(dateStr) {
+        const d = parseDateString(dateStr);
+        if (!d) return null;
+
+        const day = d.getDay();
+        const monday = new Date(d);
+        monday.setDate(d.getDate() + ((day === 0 ? -6 : 1) - day));
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+
+        const fmt = (dt) => `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
+        return { sortKey: monday.getTime(), label: `${fmt(monday)} a ${fmt(sunday)}` };
+    }
+
+    function updateWeekFilterOptions() {
+        const select = document.getElementById('filterWeekSelect');
+        const currentValue = select.value;
+        const weeksMap = new Map();
+
+        students.forEach(s => {
+            if (s.date) {
+                const weekObj = getWeekRangeObject(s.date);
+                if (weekObj) weeksMap.set(weekObj.label, weekObj.sortKey);
+            }
+        });
+
+        const sortedWeeks = Array.from(weeksMap.entries()).sort((a, b) => b[1] - a[1]);
+        let optionsHtml = '<option value="all">Semanas</option>';
+        sortedWeeks.forEach(([label]) => { optionsHtml += `<option value="${label}">${label}</option>`; });
+
+        select.innerHTML = optionsHtml;
+        select.value = weeksMap.has(currentValue) || currentValue === 'all' ? currentValue : 'all';
+    }
+
+    function updateScrollProxyWidth() {
+        const table = document.querySelector('.table-responsive table');
+        const proxyContent = document.getElementById('scrollbarProxyContent');
+        if (table && proxyContent) proxyContent.style.width = table.scrollWidth + 'px';
+    }
+
+    function toggleModal(show) {
+        document.getElementById('configModal').classList.toggle('active', show);
+    }
+
+    function toggleHistoryModal(show, studentName = '') {
+        const modal = document.getElementById('historyModal');
+        if (show) {
+            currentHistoryStudentName = studentName;
+            document.getElementById('historyModalTitle').innerText = `📊 Histórico: ${studentName}`;
+            
+            const studentDistances = [...new Set(students.filter(s => saoNomesIguais(s.name, studentName)).map(s => s.testDist))];
+            document.getElementById('chartDistanceSelect').innerHTML = studentDistances.map(d => `<option value="${d}">${d}m</option>`).join('');
+
+            renderHistoryModalBody();
+            renderHistoryChart();
+            modal.classList.add('active');
+        } else {
+            modal.classList.remove('active');
+        }
+    }
+
+    function renderHistoryChart() {
+        const selectedDist = parseInt(document.getElementById('chartDistanceSelect').value);
+        if (!selectedDist) return;
+
+        const studentHistory = students
+            .filter(s => saoNomesIguais(s.name, currentHistoryStudentName) && s.testDist === selectedDist)
+            .sort((a, b) => (parseDateString(a.date) || 0) - (parseDateString(b.date) || 0));
+
+        const labels = studentHistory.map(h => formatDate(h.date));
+        const timeDataInSeconds = studentHistory.map(h => h.timeSec);
+
+        const pointColors = [];
+        const pointBorderColors = [];
+
+        timeDataInSeconds.forEach((sec, idx) => {
+            if (idx === 0) {
+                pointColors.push('#0284c7');
+                pointBorderColors.push('#38bdf8');
+            } else {
+                const diffSec = sec - timeDataInSeconds[idx - 1];
+                if (diffSec < 0) { pointColors.push('#10b981'); pointBorderColors.push('#6ee7b7'); }
+                else if (diffSec > 0) { pointColors.push('#ef4444'); pointBorderColors.push('#fca5a5'); }
+                else { pointColors.push('#94a3b8'); pointBorderColors.push('#cbd5e1'); }
+            }
+        });
+
+        const ctx = document.getElementById('evolutionChart').getContext('2d');
+        if (myChartInstance) myChartInstance.destroy();
+
+        myChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Tempo (${selectedDist}m)`,
+                    data: timeDataInSeconds,
+                    borderColor: '#38bdf8',
+                    backgroundColor: 'rgba(56, 189, 248, 0.08)',
+                    borderWidth: 2,
+                    pointBackgroundColor: pointColors,
+                    pointBorderColor: pointBorderColors,
+                    pointRadius: 7,
+                    fill: true,
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                    y: {
+                        ticks: { color: '#94a3b8', callback: (val) => secondsToFormatted(val) },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderHistoryModalBody() {
+        const tbody = document.getElementById('historyTableBody');
+        const studentHistory = students.filter(s => saoNomesIguais(s.name, currentHistoryStudentName))
+            .sort((a, b) => (parseDateString(b.date) || 0) - (parseDateString(a.date) || 0));
+
+        if (studentHistory.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">Nenhum registro encontrado.</div></td></tr>`;
+            return;
+        }
+
+        let rowsHtml = '';
+        studentHistory.forEach(h => {
+            const stats = calculateTestStats(h.timeSec, h.testDist);
+            const key = buildTestKey(h.name, h.date, h.testDist);
+            
+            rowsHtml += `
+                <tr>
+                    <td>📅 ${formatDate(h.date)}</td>
+                    <td><span class="test-badge">${h.testDist}m</span></td>
+                    <td class="test-info">${formatTimeDisplay(h.timeStr)}</td>
+                    <td style="font-size: 0.78rem;">⚡ ${stats.pace}<br>🚀 ${stats.speed}</td>
+                    <td style="font-size: 0.75rem; color: var(--text-muted);">${h.obs || '-'}</td>
+                    <td>
+                        <button class="btn-icon" onclick="openEditModal('${key}')" title="Editar">✏️</button>
+                        <button class="btn-icon btn-danger" onclick="deleteStudent('${key}')" title="Excluir">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = rowsHtml;
+    }
+
+    function toggleEditModal(show) {
+        document.getElementById('editModal').classList.toggle('active', show);
+    }
+
+    function openEditModal(key) {
+        const student = students.find(s => buildTestKey(s.name, s.date, s.testDist) === key);
+        if (!student) return;
+
+        document.getElementById('editOriginalKey').value = key;
+        document.getElementById('editStudentName').value = student.name;
+        document.getElementById('editTestDistance').value = student.testDist;
+        document.getElementById('editTestDate').value = student.date;
+        document.getElementById('editTestTime').value = student.timeStr;
+        document.getElementById('editTestObs').value = student.obs || '';
+
+        toggleEditModal(true);
+    }
+
+    document.getElementById('editStudentForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const originalKey = document.getElementById('editOriginalKey').value;
+        const studentIndex = students.findIndex(s => buildTestKey(s.name, s.date, s.testDist) === originalKey);
+
+        if (studentIndex !== -1) {
+            const timeStr = document.getElementById('editTestTime').value.trim();
+            const sec = timeToSeconds(timeStr);
+            if (!sec) return alert('Tempo inválido.');
+
+            const updatedStudent = {
+                name: document.getElementById('editStudentName').value.trim(),
+                testDist: parseInt(document.getElementById('editTestDistance').value),
+                date: document.getElementById('editTestDate').value,
+                timeStr: timeStr,
+                timeSec: sec,
+                obs: document.getElementById('editTestObs').value.trim()
+            };
+
+            students[studentIndex] = updatedStudent;
+            saveData();
+            sendStudentToSheets(updatedStudent);
+            toggleEditModal(false);
+            updateWeekFilterOptions();
+            renderTable();
+
+            if (document.getElementById('historyModal').classList.contains('active')) {
+                renderHistoryModalBody();
+                renderHistoryChart();
+            }
+        }
+    });
+
+    function addNewDistance() {
+        const distNum = parseInt(prompt('Nova distância em metros:'));
+        if (!distNum || distNum <= 0) return;
+        if (distanceConfigs.some(d => d.dist === distNum)) return alert('Já cadastrada!');
+
+        distanceConfigs.push({ dist: distNum, min: 100, max: 105 });
+        distanceConfigs.sort((a, b) => a.dist - b.dist);
+        saveData();
+        renderConfigGrids();
+        updateTableHeader();
+        renderTable();
+    }
+
+    function removeDistance(distNum) {
+        if (distanceConfigs.length <= 1) return alert('Mantenha ao menos uma distância.');
+        if (confirm(`Remover ${distNum}m?`)) {
+            distanceConfigs = distanceConfigs.filter(d => d.dist !== distNum);
+            saveData();
+            renderConfigGrids();
+            updateTableHeader();
+            renderTable();
+        }
+    }
+
+    function addNewZone() {
+        const name = prompt('Nome da Zona:');
+        if (!name) return;
+        const minPct = parseFloat(prompt('Mínima (%):', '100')) || 100;
+        const maxPct = parseFloat(prompt('Máxima (%):', '110')) || 110;
+
+        zoneConfigs.push({ name: name, min: minPct, max: maxPct });
+        saveData();
+        renderConfigGrids();
+        updateTableHeader();
+        if (viewMode === 'zone') renderTable();
+    }
+
+    function removeZone(index) {
+        if (zoneConfigs.length <= 1) return alert('Mantenha ao menos uma zona.');
+        if (confirm(`Remover "${zoneConfigs[index].name}"?`)) {
+            zoneConfigs.splice(index, 1);
+            saveData();
+            renderConfigGrids();
+            updateTableHeader();
+            if (viewMode === 'zone') renderTable();
+        }
+    }
+
+    function renderConfigGrids() {
+        const containerDist = document.getElementById('pctGridDist');
+        containerDist.innerHTML = '';
+        distanceConfigs.forEach((d, idx) => {
+            const row = document.createElement('div');
+            row.className = 'pct-row';
+            row.innerHTML = `
+                <label style="width: 80px;">${d.dist}m</label>
+                <div class="pct-inputs">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Mín%</span>
+                    <input type="number" value="${d.min}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="min" class="dist-input">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Máx%</span>
+                    <input type="number" value="${d.max}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="max" class="dist-input">
+                </div>
+                <button class="btn-icon btn-danger" onclick="removeDistance(${d.dist})">🗑️</button>
+            `;
+            containerDist.appendChild(row);
+        });
+
+        containerDist.querySelectorAll('.dist-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.idx);
+                const field = e.target.dataset.field;
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val)) {
+                    distanceConfigs[idx][field] = val;
+                    saveData();
+                    if (viewMode === 'dist') renderTable();
+                }
+            });
+        });
+
+        const containerZone = document.getElementById('pctGridZone');
+        containerZone.innerHTML = '';
+        zoneConfigs.forEach((z, idx) => {
+            const row = document.createElement('div');
+            row.className = 'pct-row';
+            row.innerHTML = `
+                <input type="text" value="${z.name}" data-idx="${idx}" class="zone-name-input" style="width: 140px; font-weight: 600; color: var(--c4-cyan); padding: 4px 8px;">
+                <div class="pct-inputs">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Mín%</span>
+                    <input type="number" value="${z.min}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="min" class="zone-input">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Máx%</span>
+                    <input type="number" value="${z.max}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="max" class="zone-input">
+                </div>
+                <button class="btn-icon btn-danger" onclick="removeZone(${idx})">🗑️</button>
+            `;
+            containerZone.appendChild(row);
+        });
+
+        containerZone.querySelectorAll('.zone-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.idx);
+                const field = e.target.dataset.field;
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val)) {
+                    zoneConfigs[idx][field] = val;
+                    saveData();
+                    if (viewMode === 'zone') renderTable();
+                }
+            });
+        });
+
+        containerZone.querySelectorAll('.zone-name-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.idx);
+                zoneConfigs[idx].name = e.target.value.trim();
+                saveData();
+                updateTableHeader();
+                if (viewMode === 'zone') renderTable();
+            });
+        });
+
+        document.getElementById('alertWarnDaysInput').addEventListener('change', (e) => {
+            alertConfig.warnDays = parseInt(e.target.value) || 60;
+            saveData();
+            renderTable();
+        });
+
+        document.getElementById('alertAlertDaysInput').addEventListener('change', (e) => {
+            alertConfig.alertDays = parseInt(e.target.value) || 90;
+            saveData();
+            renderTable();
+        });
+    }
+
+    function updateTableHeader() {
+        const headerRow = document.getElementById('tableHeaderRow');
+        let html = '';
+
+        if (viewMode === 'target') {
+            html = `
+                <th>Atleta</th>
+                <th>Prova Alvo</th>
+                <th>Distância</th>
+                <th>Data Prova</th>
+                <th>Tempo Alvo</th>
+                <th>Pace Necessário</th>
+                <th>Capacidade (Teste)</th>
+            `;
+        } else if (viewMode === 'zone') {
+            html = `
+                <th style="width: 50px;">Ordem</th>
+                <th>Aluno</th>
+                <th style="text-align: center;">Teste / Data</th>
+            `;
+            zoneConfigs.forEach(z => {
+                html += `<th>${z.name}<br><span style="font-size: 0.65rem; color: var(--c4-cyan); font-weight: normal;">(${z.min}% - ${z.max}%)</span></th>`;
+            });
+            html += `<th style="text-align: center;">Ações</th>`;
+        } else {
+            html = `
+                <th style="width: 50px;">Ordem</th>
+                <th>Aluno</th>
+                <th style="text-align: center;">Teste / Data</th>
+            `;
+            distanceConfigs.forEach(d => {
+                html += `<th>${d.dist}m<br><span style="font-size: 0.65rem; color: var(--c4-cyan); font-weight: normal;">(${d.min}% - ${d.max}%)</span></th>`;
+            });
+            html += `<th style="text-align: center;">Ações</th>`;
+        }
+
+        headerRow.innerHTML = html;
+        setTimeout(updateScrollProxyWidth, 50);
+    }
+
+    function renderTable() {
+        if (viewMode === 'target') {
+            renderTargetRacesTable();
+            return;
+        }
+
+        const tbody = document.getElementById('studentTableBody');
+        const searchQuery = document.getElementById('searchInput').value.trim();
+        const selectedTestFilter = document.getElementById('filterTestSelect').value;
+        const selectedWeekFilter = document.getElementById('filterWeekSelect').value;
+        const selectedStatusFilter = document.getElementById('filterStatusSelect').value;
+
+        const filteredStudents = students.filter(student => {
+            const matchesName = !searchQuery || saoNomesIguais(student.name, searchQuery) || student.name.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesTest = selectedTestFilter === 'all' || student.testDist.toString() === selectedTestFilter;
+            const weekObj = getWeekRangeObject(student.date);
+            const matchesWeek = selectedWeekFilter === 'all' || (weekObj && weekObj.label === selectedWeekFilter);
+            const status = getTestStatus(student.date);
+            const matchesStatus = selectedStatusFilter === 'all' || status.key === selectedStatusFilter;
+
+            return matchesName && matchesTest && matchesWeek && matchesStatus;
+        });
+
+        const colCount = (viewMode === 'zone' ? zoneConfigs.length : distanceConfigs.length) + 4;
+
+        if (filteredStudents.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="${colCount}"><div class="empty-state">Nenhum aluno encontrado.</div></td></tr>`;
+            setTimeout(updateScrollProxyWidth, 50);
+            return;
+        }
+
+        let fullTableHtml = '';
+
+        filteredStudents.forEach((student) => {
+            let dataCells = '';
+
+            if (viewMode === 'zone') {
+                zoneConfigs.forEach(z => {
+                    const paceFastSec = calculatePaceFromVamPct(student.timeSec, student.testDist, z.max);
+                    const paceSlowSec = calculatePaceFromVamPct(student.timeSec, student.testDist, z.min);
+
+                    dataCells += `
+                        <td>
+                            <div class="time-badge">
+                                <span class="time-val">⚡ ${secondsToFormatted(paceFastSec)} ~ ${secondsToFormatted(paceSlowSec)}</span>
+                                <span class="pace-val">/km</span>
+                            </div>
+                        </td>`;
+                });
+            } else {
+                distanceConfigs.forEach(d => {
+                    const splitSecFast = calculateSplit(student.timeSec, student.testDist, d.dist, d.max);
+                    const splitSecSlow = calculateSplit(student.timeSec, student.testDist, d.dist, d.min);
+
+                    dataCells += `
+                        <td>
+                            <div class="time-badge">
+                                <span class="time-val">${secondsToFormatted(splitSecFast)} ~ ${secondsToFormatted(splitSecSlow)}</span>
+                                <span class="pace-val">⚡ ${calculatePaceFromSplit(splitSecFast, d.dist)} ~ ${calculatePaceFromSplit(splitSecSlow, d.dist)}/km</span>
+                            </div>
+                        </td>`;
+                });
+            }
+
+            const stats = calculateTestStats(student.timeSec, student.testDist);
+            const status = getTestStatus(student.date);
+            const evolution = getStudentEvolution(student);
+
+            let evolutionHtml = '';
+            if (evolution) {
+                const badgeClass = evolution.type === 'better' ? 'evolution-better' : (evolution.type === 'worse' ? 'evolution-worse' : 'evolution-equal');
+                const icon = evolution.type === 'better' ? '🟢' : (evolution.type === 'worse' ? '🔴' : '⚪');
+                evolutionHtml = `<div class="evolution-badge ${badgeClass}">${icon} ${evolution.text}</div>`;
+            }
+
+            let obsHtml = student.obs ? `<span class="obs-tooltip" title="${student.obs}">📝</span>` : '';
+            const key = buildTestKey(student.name, student.date, student.testDist);
+
+            fullTableHtml += `
+                <tr>
+                    <td>
+                        <div style="display: flex; gap: 2px; justify-content: center;">
+                            <button class="btn-icon" onclick="moveStudent('${key}', -1)">▲</button>
+                            <button class="btn-icon" onclick="moveStudent('${key}', 1)">▼</button>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="student-name" onclick="toggleHistoryModal(true, '${student.name.replace(/'/g, "\\'")}')">${student.name}</span>
+                        ${obsHtml}
+                    </td>
+                    <td style="text-align: center;">
+                        <div class="test-cell-container">
+                            <div class="test-info">${formatTimeDisplay(student.timeStr)} <span class="test-badge">${student.testDist}m</span></div>
+                            <div class="test-stats">⚡ ${stats.pace} | 🚀 ${stats.speed}</div>
+                            <div class="test-date">
+                                📅 ${formatDate(student.date)} 
+                                <span class="status-tag ${status.class}">${status.label}</span>
+                            </div>
+                            ${evolutionHtml}
+                        </div>
+                    </td>
+                    ${dataCells}
+                    <td style="text-align: center;">
+                        <div style="display: flex; gap: 4px; justify-content: center;">
+                            <button class="btn-icon" onclick="openEditModal('${key}')">✏️</button>
+                            <button class="btn-icon btn-danger" onclick="deleteStudent('${key}')">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = fullTableHtml;
+        setTimeout(updateScrollProxyWidth, 50);
+    }
+
+    function renderTargetRacesTable() {
+        const tbody = document.getElementById('studentTableBody');
+
+        if (isFetchingTargetRaces) {
+            tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">🔄 Sincronizando dados...</div></td></tr>`;
+            return;
+        }
+
+        const searchQuery = document.getElementById('searchInput').value.trim();
+        const filteredRaces = targetRacesData.filter(item => {
+            const nameMatch = !searchQuery || saoNomesIguais(item.nome || '', searchQuery) || (item.nome || '').toLowerCase().includes(searchQuery.toLowerCase());
+            const raceMatch = (item.prova || '').toLowerCase().includes(searchQuery.toLowerCase());
+            return nameMatch || raceMatch;
+        });
+
+        if (filteredRaces.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">Nenhum registro de Prova Alvo encontrado.</div></td></tr>`;
+            setTimeout(updateScrollProxyWidth, 50);
+            return;
+        }
+
+        let fullTableHtml = '';
+
+        filteredRaces.forEach(item => {
+            const tempoBruto = String(item.tempoAlvo || '').trim();
+            const distanciaBruta = String(item.distancia || '').trim();
+
+            const targetPaceFormatted = calculateTargetPace(tempoBruto, distanciaBruta);
+            const targetSec = timeToSeconds(tempoBruto);
+            const distKm = parseDistanceKm(distanciaBruta);
+
+            const recentStudentTest = students
+                .filter(s => saoNomesIguais(s.name, item.nome || ''))
+                .sort((a, b) => (parseDateString(b.date) || 0) - (parseDateString(a.date) || 0))[0];
+
+            let capabilityHtml = '<span class="status-tag status-alert">⚪ Sem Teste de Pista</span>';
+
+            if (recentStudentTest && targetSec && distKm > 0) {
+                const testStats = calculateTestStats(recentStudentTest.timeSec, recentStudentTest.testDist);
+                const targetPaceSec = targetSec / distKm;
+                const testBasePaceSec = (recentStudentTest.timeSec / recentStudentTest.testDist) * 1000;
+
+                if ((testBasePaceSec / targetPaceSec) <= 1.05) {
+                    capabilityHtml = `<div style="font-size: 0.75rem; text-align: center;"><span class="status-tag status-ok">🟢 Meta Atingível</span><br><span class="hint">Teste: ${testStats.pace}</span></div>`;
+                } else {
+                    capabilityHtml = `<div style="font-size: 0.75rem; text-align: center;"><span class="status-tag status-warn">🟡 Desafio Alto</span><br><span class="hint">Teste: ${testStats.pace}</span></div>`;
+                }
+            }
+
+            fullTableHtml += `
+                <tr>
+                    <td><strong>${item.nome}</strong></td>
+                    <td style="color: var(--c4-cyan); font-weight: 600;">${item.prova}</td>
+                    <td><span class="test-badge">${distanciaBruta || '-'}</span></td>
+                    <td>📅 ${formatDate(item.dataProva) || '-'}</td>
+                    <td class="test-info">${formatTimeDisplay(tempoBruto)}</td>
+                    <td><div class="time-badge"><span class="time-val">⚡ ${targetPaceFormatted}</span></div></td>
+                    <td style="text-align: center;">${capabilityHtml}</td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = fullTableHtml;
+        setTimeout(updateScrollProxyWidth, 50);
+    }
+
+    function moveStudent(key, direction) {
+        const index = students.findIndex(s => buildTestKey(s.name, s.date, s.testDist) === key);
+        if (index === -1) return;
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= students.length) return;
+        
+        const temp = students[index];
+        students[index] = students[newIndex];
+        students[newIndex] = temp;
+        saveData();
+        renderTable();
+    }
+
+    function deleteStudent(key) {
+        if (confirm('Excluir este registro?')) {
+            students = students.filter(s => buildTestKey(s.name, s.date, s.testDist) !== key);
+            saveData();
+            updateWeekFilterOptions();
+            renderTable();
+            if (document.getElementById('historyModal').classList.contains('active')) {
+                renderHistoryModalBody();
+                renderHistoryChart();
+            }
+        }
+    }
+
+    document.getElementById('addStudentForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const sec = timeToSeconds(document.getElementById('testTime').value.trim());
+        if (!sec) return alert('Tempo em formato MM:SS inválido.');
+
+        const newStudent = {
+            name: document.getElementById('studentName').value.trim(),
+            testDist: parseInt(document.getElementById('testDistance').value),
+            date: document.getElementById('testDate').value,
+            timeStr: document.getElementById('testTime').value.trim(),
+            timeSec: sec,
+            obs: document.getElementById('testObs').value.trim()
+        };
+
+        students.push(newStudent);
+        saveData();
+        sendStudentToSheets(newStudent);
+
+        document.getElementById('studentName').value = '';
+        document.getElementById('testTime').value = '';
+        document.getElementById('testObs').value = '';
+        toggleAddForm();
+        updateWeekFilterOptions();
+        renderTable();
+    });
+
+    let searchDebounceTimeout = null;
+    document.getElementById('searchInput').addEventListener('input', () => {
+        clearTimeout(searchDebounceTimeout);
+        searchDebounceTimeout = setTimeout(() => {
+            renderTable();
+        }, 150);
+    });
+
+    document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
+
+    loadFromLocalStorage();
+    renderConfigGrids();
+    updateTableHeader();
+    updateWeekFilterOptions();
+    renderTable();
+
+    setTimeout(syncWithGoogleSheets, 300);
+</script>
+
+</body>
+</html>
