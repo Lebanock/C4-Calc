@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Pace C4 - Pista</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <script src="logo-data.js"></script>a
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -91,6 +92,45 @@
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .dash-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            backdrop-filter: blur(4px);
+        }
+
+        .dash-icon {
+            font-size: 1.8rem;
+            padding: 10px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .dash-info h3 {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .dash-info .dash-val {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ffffff;
         }
 
         .btn-gear {
@@ -220,6 +260,11 @@
 
         .btn-secondary:hover {
             background: rgba(56, 189, 248, 0.15);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .btn-danger-outline {
@@ -509,21 +554,25 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .table-responsive::-webkit-scrollbar, .scrollbar-proxy::-webkit-scrollbar {
+        .table-responsive::-webkit-scrollbar,
+        .scrollbar-proxy::-webkit-scrollbar {
             height: 10px;
         }
 
-        .table-responsive::-webkit-scrollbar-track, .scrollbar-proxy::-webkit-scrollbar-track {
+        .table-responsive::-webkit-scrollbar-track,
+        .scrollbar-proxy::-webkit-scrollbar-track {
             background: rgba(15, 23, 42, 0.6);
             border-radius: 4px;
         }
 
-        .table-responsive::-webkit-scrollbar-thumb, .scrollbar-proxy::-webkit-scrollbar-thumb {
+        .table-responsive::-webkit-scrollbar-thumb,
+        .scrollbar-proxy::-webkit-scrollbar-thumb {
             background: rgba(56, 189, 248, 0.3);
             border-radius: 4px;
         }
 
-        .table-responsive::-webkit-scrollbar-thumb:hover, .scrollbar-proxy::-webkit-scrollbar-thumb:hover {
+        .table-responsive::-webkit-scrollbar-thumb:hover,
+        .scrollbar-proxy::-webkit-scrollbar-thumb:hover {
             background: var(--c4-cyan);
         }
 
@@ -561,7 +610,7 @@
             background-color: rgba(56, 189, 248, 0.1);
         }
 
-        th:nth-child(2), td:nth-child(2) {
+        th:nth-child(1), td:nth-child(1) {
             text-align: left;
         }
 
@@ -714,24 +763,128 @@
             border-bottom: 1px dotted var(--text-muted);
         }
 
-        /* Certificado A4 */
+        .capability-interactive-card {
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            display: inline-block;
+        }
+        .capability-interactive-card:hover {
+            background: rgba(56, 189, 248, 0.08);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: scale(1.02);
+        }
+
+        .physio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .physio-card {
+            background: var(--bg-input);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .physio-card-title {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .physio-card-val {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--c4-cyan);
+        }
+
+        .physio-card-sub {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        .physio-verdict-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 14px;
+        }
+
+        .story-card-wrapper {
+            width: 360px;
+            height: 640px;
+            background: #080d1a;
+            background-image: radial-gradient(circle at 50% 10%, rgba(14, 165, 233, 0.3), transparent 70%),
+                              linear-gradient(180deg, #0f172a 0%, #080d1a 100%);
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            border-radius: 24px;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            color: #ffffff;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+        }
+
+        .story-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .story-metric-badge {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 16px;
+            padding: 16px 20px;
+            width: 100%;
+        }
+
+        .story-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
+            padding-top: 12px;
+        }
+
         .direct-cert-wrapper {
             position: relative;
             width: 794px;
             height: 1120px;
-            max-height: 1120px;
-            background: #ffffff;
             background: radial-gradient(circle at 50% 15%, #ffffff 0%, #edf4fc 60%, #dae8f9 100%);
             padding: 38px 45px 30px 45px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            overflow: hidden;
-            box-sizing: border-box;
             color: #0b1c33;
             margin: 0 auto;
-            page-break-inside: avoid;
-            page-break-after: avoid;
         }
 
         .direct-cert-wrapper .frame-outer {
@@ -766,14 +919,9 @@
             max-height: 80px; max-width: 170px; width: auto; height: auto;
             object-fit: contain;
         }
-        .direct-cert-wrapper .logo-fallback-text {
-            font-family: 'Orbitron', 'Plus Jakarta Sans', sans-serif;
-            font-size: 2.2rem; font-weight: 900; font-style: italic; color: #0284c7; letter-spacing: -1px;
-        }
         .direct-cert-wrapper .main-title { font-size: 1.95rem; font-weight: 900; color: #0b1c33; letter-spacing: 1.5px; text-transform: uppercase; }
         .direct-cert-wrapper .sub-title { font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-top: 4px; }
-        .direct-cert-wrapper .athlete-container { margin: 10px 0; }
-        .direct-cert-wrapper .athlete-name { font-size: 2.15rem; font-weight: 800; color: #0f2e5a; letter-spacing: -0.5px; }
+        .direct-cert-wrapper .athlete-name { font-size: 2.15rem; font-weight: 800; color: #0f2e5a; letter-spacing: -0.5px; margin: 10px 0; }
         .direct-cert-wrapper .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 88%; margin: 5px auto; }
         .direct-cert-wrapper .metric-box { display: flex; flex-direction: column; align-items: center; }
         .direct-cert-wrapper .metric-label { font-size: 0.74rem; font-weight: 800; color: #334155; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
@@ -799,10 +947,6 @@
         .direct-cert-wrapper .col-vam { font-weight: 600; color: #0f172a; text-align: center; width: 32%; }
         .direct-cert-wrapper .col-pace { font-weight: 800; color: #073567; text-align: right; width: 32%; font-variant-numeric: tabular-nums; }
         .direct-cert-wrapper .pace-unit { font-weight: 600; color: #0c2340; font-size: 0.82rem; }
-        .direct-cert-wrapper .footer-section {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            position: relative; width: 100%; padding-bottom: 6px;
-        }
         .direct-cert-wrapper .footer-meta { font-size: 0.85rem; color: #1e293b; font-weight: 600; margin-bottom: 8px; }
         .direct-cert-wrapper .bottom-c4-wrapper {
             position: relative; width: 100%; display: flex;
@@ -815,94 +959,36 @@
             padding: 0 20px; display: flex; align-items: center; justify-content: center;
         }
         .direct-cert-wrapper .c4-metallic-text {
-            font-family: 'Orbitron', 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Orbitron', sans-serif;
             font-size: 1.7rem; font-weight: 900; font-style: italic; letter-spacing: -1px;
             color: #0284c7;
         }
 
-        @media (max-width: 600px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-        }
-
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
-
+        @page { size: A4 portrait; margin: 0; }
         @media print {
             html, body {
-                width: 210mm !important;
-                height: 297mm !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: #ffffff !important;
-                overflow: hidden !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+                width: 210mm !important; height: 297mm !important;
+                margin: 0 !important; padding: 0 !important; background: #ffffff !important;
+                -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
             }
-
-            body > *:not(#directCertModal) {
-                display: none !important;
-            }
-
+            body > *:not(#directCertModal) { display: none !important; }
             #directCertModal {
-                position: static !important;
-                display: block !important;
-                width: 210mm !important;
-                height: 297mm !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: none !important;
-                backdrop-filter: none !important;
-                opacity: 1 !important;
-                pointer-events: auto !important;
-                overflow: hidden !important;
+                position: static !important; display: block !important;
+                width: 210mm !important; height: 297mm !important;
+                margin: 0 !important; padding: 0 !important; background: none !important;
+                opacity: 1 !important; pointer-events: auto !important;
             }
-
             #directCertModal .modal {
-                position: static !important;
-                width: 210mm !important;
-                height: 297mm !important;
-                max-width: none !important;
-                max-height: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: none !important;
-                border: none !important;
-                box-shadow: none !important;
-                transform: none !important;
-                overflow: hidden !important;
+                position: static !important; width: 210mm !important; height: 297mm !important;
+                max-width: none !important; max-height: none !important; padding: 0 !important;
+                margin: 0 !important; background: none !important; border: none !important;
+                box-shadow: none !important; transform: none !important;
             }
-
-            .cert-modal-controls, #directCertModal .modal-header {
-                display: none !important;
-            }
-
-            #directCertContainer {
-                padding: 0 !important;
-                margin: 0 !important;
-                width: 210mm !important;
-                height: 297mm !important;
-                overflow: hidden !important;
-            }
-
+            .cert-modal-controls, #directCertModal .modal-header { display: none !important; }
+            #directCertContainer { padding: 0 !important; margin: 0 !important; width: 210mm !important; height: 297mm !important; }
             .direct-cert-wrapper {
-                width: 210mm !important;
-                height: 297mm !important;
-                max-height: 297mm !important;
-                margin: 0 !important;
-                padding: 20mm 16mm 14mm 16mm !important;
-                box-shadow: none !important;
-                box-sizing: border-box !important;
-                page-break-inside: avoid !important;
-                page-break-after: avoid !important;
+                width: 210mm !important; height: 297mm !important; max-height: 297mm !important;
+                margin: 0 !important; padding: 20mm 16mm 14mm 16mm !important; box-shadow: none !important;
             }
         }
     </style>
@@ -912,7 +998,7 @@
 <div class="container">
     <header>
         <div class="logo-container">
-           <img src="logo.png" alt="Logo C4" class="logo-img" id="mainLogoImg">
+           <img src="logo.png" alt="Logo C4" class="logo-img" id="mainLogoImg" onerror="this.style.display='none'">
             <div>
                 <h1>Calculadora de Pace C4</h1>
                 <p>Gerenciamento, Histórico e Evolução de Testes de Pista</p>
@@ -920,10 +1006,43 @@
         </div>
         <div class="header-actions">
             <button class="btn-action" onclick="toggleAddForm()">➕ Registrar Teste</button>
+            <button class="btn-action" onclick="toggleSimulatorModal(true)" title="Simulador de Projeções e Tiros">🔮 Simulador</button>
             <button class="btn-action" onclick="exportToExcel()" title="Exportar testes/provas">📊 Export Excel</button>
             <button class="btn-gear" onclick="toggleModal(true)">⚙️ Configurações</button>
         </div>
     </header>
+
+    <div class="dashboard-grid">
+        <div class="dash-card">
+            <div class="dash-icon">🏃</div>
+            <div class="dash-info">
+                <h3>Atletas Únicos</h3>
+                <div class="dash-val" id="dashTotalAthletes">0</div>
+            </div>
+        </div>
+        <div class="dash-card">
+            <div class="dash-icon">📋</div>
+            <div class="dash-info">
+                <h3>Testes Registrados</h3>
+                <div class="dash-val" id="dashTotalTests">0</div>
+            </div>
+        </div>
+        <div class="dash-card">
+            <div class="dash-icon">🟢</div>
+            <div class="dash-info">
+                <h3>Testes em Dia</h3>
+                <div class="dash-val" id="dashValidTestsPct">0%</div>
+            </div>
+        </div>
+        <!-- Substitua o card da VAM média por este: -->
+		<div class="dash-card">
+    			<div class="dash-icon">🎯</div>
+    			<div class="dash-info">
+        		<h3>Atletas c/ Prova Alvo</h3>
+        	<div class="dash-val" id="dashTargetAthletes">0</div>
+    	</div>
+</div>
+    </div>
 
     <div class="card" id="addFormCard" style="display: none;">
         <div class="card-title" onclick="toggleAddForm()">
@@ -1033,7 +1152,8 @@
         <div class="config-tabs">
             <button class="config-tab active" onclick="switchConfigTab('dist')">Distâncias de Treino</button>
             <button class="config-tab" onclick="switchConfigTab('zone')">Zonas de Intensidade</button>
-            <button class="config-tab" onclick="switchConfigTab('alert')">Alertas e Validade</button>
+            <button class="config-tab" onclick="switchConfigTab('target')">🎯 Provas Alvo (% VAM)</button>
+            <button class="config-tab" onclick="switchConfigTab('alert')">Alertas & Backup</button>
         </div>
 
         <div class="config-pane active" id="paneDist">
@@ -1046,6 +1166,12 @@
             <p class="hint" style="margin-bottom: 12px;">Zonas e porcentagens (%) de VAM.</p>
             <div class="pct-grid" id="pctGridZone"></div>
             <button class="btn btn-secondary" onclick="addNewZone()" style="margin-bottom: 20px;">➕ Adicionar Nova Zona</button>
+        </div>
+
+        <div class="config-pane" id="paneTarget">
+            <p class="hint" style="margin-bottom: 12px;">Configuração de % de VAM sustentável por faixa de distância em Provas Alvo.</p>
+            <div class="pct-grid" id="pctGridTarget"></div>
+            <button class="btn btn-secondary" onclick="addNewTargetProfile()" style="margin-bottom: 20px;">➕ Adicionar Faixa de Prova</button>
         </div>
 
         <div class="config-pane" id="paneAlert">
@@ -1064,6 +1190,16 @@
                         <input type="number" id="alertDays" min="1" max="365" style="width: 100px;">
                         <span style="font-size: 0.8rem; color: var(--text-muted);">dias após o teste</span>
                     </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">
+                <h3 style="font-size: 0.9rem; color: var(--c4-cyan); margin-bottom: 8px;">📦 Backup e Restauração de Dados</h3>
+                <p class="hint" style="margin-bottom: 12px;">Exporte os dados em arquivo JSON para cópia de segurança.</p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="exportDataBackup()" style="width: auto;">💾 Baixar Backup (JSON)</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('backupFileInput').click()" style="width: auto;">📥 Restaurar Backup</button>
+                    <input type="file" id="backupFileInput" style="display: none;" accept=".json" onchange="importDataBackup(event)">
                 </div>
             </div>
         </div>
@@ -1110,6 +1246,112 @@
         </div>
         <div style="margin-top: 20px; text-align: right;">
             <button class="btn" style="width: auto; display: inline-flex;" onclick="toggleHistoryModal(false)">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Diagnóstico Fisiológico da Prova Alvo -->
+<div class="modal-overlay" id="targetDetailModal">
+    <div class="modal" style="max-width: 650px;">
+        <div class="modal-header">
+            <h2 id="targetDetailModalTitle">🔬 Diagnóstico Fisiológico da Meta</h2>
+            <button class="close-btn" onclick="toggleTargetDetailModal(false)">&times;</button>
+        </div>
+        <div id="targetDetailModalContent"></div>
+        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <button class="btn btn-success" id="btnShareTargetWhatsApp" style="width: auto; display: inline-flex;">📱 Enviar Feedback no WhatsApp</button>
+            <button class="btn" style="width: auto; display: inline-flex;" onclick="toggleTargetDetailModal(false)">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Simulador -->
+<div class="modal-overlay" id="simulatorModal">
+    <div class="modal" style="max-width: 720px;">
+        <div class="modal-header">
+            <h2>🔮 Simulador de Projeções & Tiros</h2>
+            <button class="close-btn" onclick="toggleSimulatorModal(false)">&times;</button>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 16px;">
+            <div class="form-group" style="grid-column: span 2;">
+                <label for="simAthleteSelect">Carregar Aluno Existente:</label>
+                <select id="simAthleteSelect" onchange="loadAthleteIntoSimulator()">
+                    <option value="">-- Selecione um Aluno ou Digite os Dados Abaixo --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="simTestDist">Distância Base (m):</label>
+                <input type="number" id="simTestDist" value="3000" oninput="calculateSimulatorProjections()">
+            </div>
+            <div class="form-group">
+                <label for="simTestTime">Tempo Base (MM:SS):</label>
+                <input type="text" id="simTestTime" value="12:00" placeholder="12:00" oninput="calculateSimulatorProjections()">
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+                <label for="simRiegelExponent">Perfil de Fadiga do Atleta:</label>
+                <select id="simRiegelExponent" onchange="calculateSimulatorProjections()">
+                    <option value="1.03">1,02 a 1,04 — Elite / Avançado de Endurance (Mínima perda)</option>
+                    <option value="1.06" selected>1,05 a 1,07 — Amador Avançado / Treinado (Regular)</option>
+                    <option value="1.09">1,08 a 1,11 — Amador Iniciante / Pouco Rodado (Queda brusca)</option>
+                    <option value="1.13">1,12 a 1,15 — Velocista Puro / Sem Base Aeróbica</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="background: rgba(56, 189, 248, 0.05); padding: 14px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2); margin-bottom: 16px;">
+            <h3 style="font-size: 0.85rem; color: var(--c4-cyan); margin-bottom: 10px; text-transform: uppercase;">📈 Projeções Teóricas de Prova</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Distância</th>
+                            <th>Tempo Projetado</th>
+                            <th>Pace Médio</th>
+                            <th>% VAM Estimada</th>
+                        </tr>
+                    </thead>
+                    <tbody id="simProjectionsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 14px; border-radius: 12px; border: 1px solid var(--border);">
+            <h3 style="font-size: 0.85rem; color: var(--c4-cyan); margin-bottom: 10px; text-transform: uppercase;">🎯 Ritmos Sugeridos para Tiros Fracionados na Pista</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiro</th>
+                            <th>Faixa de Intensidade (% VAM)</th>
+                            <th>Tempo do Split (Faixa)</th>
+                            <th>Pace Equivalente (/km)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="simSplitsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; text-align: right;">
+            <button class="btn" style="width: auto; display: inline-flex;" onclick="toggleSimulatorModal(false)">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Stories Instagram -->
+<div class="modal-overlay" id="storyModal">
+    <div class="modal" style="max-width: 440px; text-align: center;">
+        <div class="modal-header">
+            <h2>📱 Story C4 (1080x1920)</h2>
+            <button class="close-btn" onclick="toggleStoryModal(false)">&times;</button>
+        </div>
+        
+        <div id="storyContainer" style="margin-bottom: 16px; display: flex; justify-content: center;"></div>
+        
+        <div style="display: flex; gap: 8px; justify-content: center;">
+            <button class="btn" id="btnDownloadStory" onclick="downloadStoryImage()">📥 Baixar Story</button>
+            <button class="btn btn-secondary" onclick="toggleStoryModal(false)">Fechar</button>
         </div>
     </div>
 </div>
@@ -1194,11 +1436,20 @@
             { name: "Z6 - Anaerobico", min: 100, max: 110 },
             { name: "Z7 - Neuromuscular", min: 110, max: 120 }
         ],
+        targetConfigs: [
+            { maxKm: 3.5, label: "Até 3.5km", zoneName: "Z5/Z6 (VO2max)", minPct: 95, maxPct: 102 },
+            { maxKm: 6.0, label: "5km (até 6km)", zoneName: "Z4/Z5 (Limiar/VO2)", minPct: 90, maxPct: 95 },
+            { maxKm: 12.0, label: "10km (até 12km)", zoneName: "Z4 (Limiar)", minPct: 85, maxPct: 90 },
+            { maxKm: 17.0, label: "15km (até 17km)", zoneName: "Z3/Z4 (Transição)", minPct: 82, maxPct: 87 },
+            { maxKm: 25.0, label: "21km (Meia)", zoneName: "Z3 (Tempo/Sub-Limiar)", minPct: 78, maxPct: 84 },
+            { maxKm: 999.0, label: "42km (Maratona+)", zoneName: "Z2/Z3 (Endurance)", minPct: 72, maxPct: 78 }
+        ],
         alertConfig: { warnDays: 30, alertDays: 60 }
     };
 
     let distanceConfigs = JSON.parse(JSON.stringify(HARDCODED_DEFAULTS.distanceConfigs));
     let zoneConfigs = JSON.parse(JSON.stringify(HARDCODED_DEFAULTS.zoneConfigs));
+    let targetConfigs = JSON.parse(JSON.stringify(HARDCODED_DEFAULTS.targetConfigs));
     let alertConfig = { ...HARDCODED_DEFAULTS.alertConfig };
     
     let targetRacesData = [];
@@ -1256,10 +1507,12 @@
         requestAnimationFrame(() => {
             const proxy = document.getElementById('scrollbarProxy');
             const tableResp = document.getElementById('tableResponsive');
-            if (source === 'proxy') {
-                tableResp.scrollLeft = proxy.scrollLeft;
-            } else {
-                proxy.scrollLeft = tableResp.scrollLeft;
+            if (proxy && tableResp) {
+                if (source === 'proxy') {
+                    tableResp.scrollLeft = proxy.scrollLeft;
+                } else {
+                    proxy.scrollLeft = tableResp.scrollLeft;
+                }
             }
             isSyncingScroll = false;
         });
@@ -1288,6 +1541,7 @@
                 const parsed = JSON.parse(cfgs);
                 if (parsed.distanceConfigs) distanceConfigs = parsed.distanceConfigs;
                 if (parsed.zoneConfigs) zoneConfigs = parsed.zoneConfigs;
+                if (parsed.targetConfigs) targetConfigs = parsed.targetConfigs;
                 if (parsed.alertConfig) alertConfig = parsed.alertConfig;
             }
 
@@ -1310,11 +1564,55 @@
         localStorage.setItem(STORAGE_KEY_CONFIGS, JSON.stringify({
             distanceConfigs,
             zoneConfigs,
+            targetConfigs,
             alertConfig
         }));
         localStorage.setItem(STORAGE_KEY_VIEW, viewMode);
         localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
-        document.getElementById('saveStatus').innerHTML = `💾 Salvo`;
+        const statusSpan = document.getElementById('saveStatus');
+        if (statusSpan) statusSpan.innerHTML = `💾 Salvo`;
+        updateDashboardMetrics();
+    }
+
+    function updateDashboardMetrics() {
+        const uniqueAthletes = new Set(students.map(s => s.cleanName)).size;
+        const totalTests = students.length;
+
+        let validCount = 0;
+
+        students.forEach(s => {
+            const st = getTestStatus(s.date);
+            if (st.key === 'ok') validCount++;
+        });
+
+        const validPct = totalTests > 0 ? Math.round((validCount / totalTests) * 100) : 0;
+        
+        // Data de hoje zerada para comparar apenas os dias
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+
+        // Filtra apenas provas futuras e conta atletas únicos
+        const uniqueFutureTargetAthletes = new Set(
+            targetRacesData
+                .filter(r => {
+                    const dataProvaStr = r.dataProva || r.data || r.Data || '';
+                    const dataProva = parseDateString(dataProvaStr);
+                    // Retorna verdadeiro apenas se a data da prova for válida e for hoje ou no futuro
+                    return dataProva && dataProva >= hoje;
+                })
+                .map(r => normalizarNome(r.nome || r.Atleta || r.atleta || r.ALUNO || ''))
+                .filter(name => name !== '')
+        ).size;
+
+        const elAthletes = document.getElementById('dashTotalAthletes');
+        const elTests = document.getElementById('dashTotalTests');
+        const elValid = document.getElementById('dashValidTestsPct');
+        const elTargetAthletes = document.getElementById('dashTargetAthletes');
+
+        if (elAthletes) elAthletes.innerText = uniqueAthletes;
+        if (elTests) elTests.innerText = totalTests;
+        if (elValid) elValid.innerText = `${validPct}%`;
+        if (elTargetAthletes) elTargetAthletes.innerText = uniqueFutureTargetAthletes;
     }
 
     function toggleAddForm() {
@@ -1333,21 +1631,22 @@
         const statusSpan = document.getElementById('saveStatus');
         
         try {
-            statusSpan.innerHTML = `⏳ Enviando...`;
+            if (statusSpan) statusSpan.innerHTML = `⏳ Enviando...`;
             await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(studentRecord)
             });
-            statusSpan.innerHTML = `☁️ Salvo no Sheets`;
+            if (statusSpan) statusSpan.innerHTML = `☁️ Salvo no Sheets`;
         } catch (err) {
-            console.error('Erro ao enviar dados para o Google Sheets:', err);
-            statusSpan.innerHTML = `⚠️ Erro de Envio`;
+            console.error('Erro ao enviar para Google Sheets:', err);
+            if (statusSpan) statusSpan.innerHTML = `⚠️ Erro Envio`;
         }
     }
 
     function updateTargetDistanceFilterOptions() {
         const select = document.getElementById('filterTargetDistanceSelect');
+        if (!select) return;
         const currentValue = select.value;
 
         const uniqueDistances = [...new Set(
@@ -1370,40 +1669,63 @@
 
         isFetchingTargetRaces = true;
         const statusSpan = document.getElementById('saveStatus');
-        statusSpan.innerHTML = `🔄 Sincronizando...`;
+        if (statusSpan) statusSpan.innerHTML = `🔄 Sincronizando...`;
 
         try {
-            const res = await fetch(GOOGLE_SHEETS_WEB_APP_URL);
-            if (!res.ok) throw new Error('Falha na resposta HTTP');
+            const res = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                method: 'GET',
+                mode: 'cors',
+                redirect: 'follow'
+            });
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             
-            const data = await res.json();
+            const rawText = await res.text();
+            let data;
+            try {
+                data = JSON.parse(rawText);
+            } catch (jsonErr) {
+                console.error('JSON Inválido recebido do Sheets:', rawText);
+                throw new Error('Formato retornado inválido.');
+            }
+
             isFetchingTargetRaces = false;
 
-            if (data.provasAlvo && Array.isArray(data.provasAlvo)) {
+            if (data && data.provasAlvo && Array.isArray(data.provasAlvo)) {
                 targetRacesData = data.provasAlvo;
             } else if (Array.isArray(data)) {
                 targetRacesData = data;
             }
 
-            if (data.testes && Array.isArray(data.testes)) {
+            let remoteTestsArray = [];
+            if (data && data.testes && Array.isArray(data.testes)) {
+                remoteTestsArray = data.testes;
+            } else if (Array.isArray(data) && data.length > 0 && (data[0].testDist || data[0].distancia || data[0].tempo || data[0].timeStr)) {
+                remoteTestsArray = data;
+            }
+
+            if (remoteTestsArray.length > 0) {
                 const updatedStudents = [];
 
-                data.testes.forEach(remoteTest => {
-                    const name = remoteTest.name || remoteTest.nome;
-                    const dist = parseInt(remoteTest.testDist || remoteTest.distancia);
-                    const date = remoteTest.date || remoteTest.data || remoteTest.dataTeste || '';
-                    const timeStr = remoteTest.timeStr || remoteTest.tempo;
-                    const sec = timeToSeconds(timeStr);
+                remoteTestsArray.forEach(remoteTest => {
+                    const name = remoteTest.name || remoteTest.nome || remoteTest.Atleta || remoteTest.atleta || remoteTest.Aluno || '';
+                    const dist = parseInt(remoteTest.testDist || remoteTest.distancia || remoteTest.testDistance || remoteTest.dist || 0);
+                    let date = remoteTest.date || remoteTest.data || remoteTest.dataTeste || remoteTest.Data || '';
+                    
+                    if (date && date.includes('T')) date = date.split('T')[0];
 
-                    if (name && dist) {
+                    const timeStr = String(remoteTest.timeStr || remoteTest.tempo || remoteTest.Tempo || '').trim();
+                    const sec = timeToSeconds(timeStr) || remoteTest.timeSec;
+
+                    if (name && dist && sec) {
                         updatedStudents.push({
                             name: name,
                             cleanName: normalizarNome(name),
                             testDist: dist,
                             date: date,
                             timeStr: timeStr,
-                            timeSec: sec || remoteTest.timeSec,
-                            obs: remoteTest.obs || remoteTest.observacoes || ''
+                            timeSec: sec,
+                            obs: remoteTest.obs || remoteTest.observacoes || remoteTest.Obs || ''
                         });
                     }
                 });
@@ -1411,18 +1733,19 @@
                 if (updatedStudents.length > 0) {
                     students = updatedStudents;
                 }
-
-                saveData();
-                updateWeekFilterOptions();
             }
 
+            saveData();
+            updateWeekFilterOptions();
             updateTargetDistanceFilterOptions();
-            statusSpan.innerHTML = `☁️ Sincronizado`;
+            updateDashboardMetrics();
             renderTable();
+
+            if (statusSpan) statusSpan.innerHTML = `☁️ Sincronizado`;
         } catch (err) {
             console.error('Erro na sincronização:', err);
             isFetchingTargetRaces = false;
-            statusSpan.innerHTML = `❌ Erro Sync`;
+            if (statusSpan) statusSpan.innerHTML = `❌ Erro Sync`;
             renderTable();
         }
     }
@@ -1473,19 +1796,80 @@
                     'Pace Necessário': calculateTargetPace(tempoAlvo, distancia)
                 };
             });
-        } else {
-            racesData = [{
-                'Atleta': 'Nenhum dado encontrado',
-                'Prova Alvo': 'Sincronize com o Sheets',
-                'Distância': '',
-                'Data da Prova': '',
-                'Tempo Alvo': '',
-                'Pace Necessário': ''
-            }];
         }
 
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(racesData), "Provas Alvo");
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(racesData.length > 0 ? racesData : [{ 'Status': 'Nenhum dado' }]), "Provas Alvo");
         XLSX.writeFile(wb, `c4_pace_dados_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+
+    function exportDataBackup() {
+        const backupObj = {
+            version: '1.0',
+            exportedAt: new Date().toISOString(),
+            distanceConfigs,
+            zoneConfigs,
+            targetConfigs,
+            alertConfig,
+            students
+        };
+        const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `c4_backup_completo_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importDataBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (data.students && Array.isArray(data.students)) {
+                    students = data.students;
+                    if (data.distanceConfigs) distanceConfigs = data.distanceConfigs;
+                    if (data.zoneConfigs) zoneConfigs = data.zoneConfigs;
+                    if (data.targetConfigs) targetConfigs = data.targetConfigs;
+                    if (data.alertConfig) alertConfig = data.alertConfig;
+
+                    saveData();
+                    updateTableHeader();
+                    updateWeekFilterOptions();
+                    renderTable();
+                    alert('Backup restaurado com sucesso!');
+                } else {
+                    alert('Formato de arquivo inválido.');
+                }
+            } catch (err) {
+                alert('Erro ao carregar o backup: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function sendWhatsAppZones(key) {
+        const student = students.find(s => buildTestKey(s.name, s.date, s.testDist) === key);
+        if (!student) return alert('Aluno não encontrado.');
+
+        const stats = calculateTestStats(student.timeSec, student.testDist);
+        let msg = `🏃 *C4 Assessoria Esportiva - Zonas de Treino*\n`;
+        msg += `👤 *Atleta:* ${student.name}\n`;
+        msg += `⏱️ *Teste:* ${student.testDist}m em ${formatTimeDisplay(student.timeStr)} (Pace Médio: ${stats.pace})\n`;
+        msg += `📅 *Data:* ${formatDate(student.date)}\n\n`;
+        msg += `🎯 *Suas Faixas de Pace por Zona (VAM):*\n`;
+
+        zoneConfigs.forEach(z => {
+            const paceFastSec = calculatePaceFromVamPct(student.timeSec, student.testDist, z.max);
+            const paceSlowSec = calculatePaceFromVamPct(student.timeSec, student.testDist, z.min);
+            msg += `▫️ *${z.name}*: ${secondsToFormatted(paceFastSec)} ~ ${secondsToFormatted(paceSlowSec)}/km\n`;
+        });
+
+        msg += `\n🚀 Bons treinos! Foco no processo.`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function toggleCertModal(show) {
@@ -1528,16 +1912,13 @@
                 <div class="cert-content">
                     <div class="header-section">
                         <div class="logo-img-wrapper">
-                            <img src="${logoSrc}" class="logo-img-clean" alt="C4 Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                            <span class="logo-fallback-text" style="display:none;">C4 PACE</span>
+                            <img src="${logoSrc}" class="logo-img-clean" alt="C4 Logo" onerror="this.style.display='none'">
                         </div>
                         <h1 class="main-title">C4 Assessoria Esportiva</h1>
                         <p class="sub-title">Certificado e Relatório de Zonas de Treinamento</p>
                     </div>
 
-                    <div class="athlete-container">
-                        <h2 class="athlete-name">${student.name}</h2>
-                    </div>
+                    <h2 class="athlete-name">${student.name}</h2>
 
                     <div class="metrics-grid">
                         <div class="metric-box">
@@ -1574,14 +1955,10 @@
                     </div>
 
                     <div class="footer-section">
-                        <div class="footer-meta">
-                            Data do Teste: ${formattedDate}
-                        </div>
+                        <div class="footer-meta">Data do Teste: ${formattedDate}</div>
                         <div class="bottom-c4-wrapper">
                             <div class="bottom-c4-line"></div>
-                            <div class="bottom-c4-badge">
-                                <span class="c4-metallic-text">C4</span>
-                            </div>
+                            <div class="bottom-c4-badge"><span class="c4-metallic-text">C4</span></div>
                         </div>
                     </div>
                 </div>
@@ -1601,54 +1978,201 @@
         btn.innerHTML = `⏳ Gerando PDF...`;
         btn.disabled = true;
 
-        const filename = `Certificado_${normalizarNome(currentExportStudent.name).replace(/\s+/g, '_')}_${currentExportStudent.testDist}m_${currentExportStudent.date || 'data'}.pdf`;
+        const filename = `Certificado_${normalizarNome(currentExportStudent.name).replace(/\s+/g, '_')}_${currentExportStudent.testDist}m.pdf`;
 
         try {
+            const canvas = await html2canvas(certElement, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
             const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            await pdf.html(certElement, {
-                callback: function (doc) {
-                    doc.save(filename);
-                    btn.innerHTML = `✅ PDF Baixado!`;
-                },
-                x: 0,
-                y: 0,
-                width: 210,
-                windowWidth: 794,
-                autoPaging: false
-            });
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+            pdf.save(filename);
+            btn.innerHTML = `✅ PDF Baixado!`;
         } catch (err) {
-            console.error('Tentativa com motor html() falhou, executando fallback via canvas:', err);
-            try {
-                const canvas = await html2canvas(certElement, {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: true,
-                    logging: false,
-                    backgroundColor: '#ffffff'
-                });
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-                pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
-                pdf.save(filename);
-                btn.innerHTML = `✅ PDF Baixado!`;
-            } catch (canvasErr) {
-                console.error('Falha no fallback:', canvasErr);
-                alert('Não foi possível gerar o download direto. Utilize o botão "Imprimir" e selecione "Salvar como PDF".');
-                btn.innerHTML = `❌ Erro`;
-            }
+            console.error('Falha na geração de PDF:', err);
+            alert('Utilize o botão "Imprimir" e selecione "Salvar como PDF".');
+            btn.innerHTML = `❌ Erro`;
         } finally {
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-            }, 2500);
+            }, 2000);
         }
+    }
+
+    function toggleStoryModal(show) {
+        document.getElementById('storyModal').classList.toggle('active', show);
+    }
+
+    function openStoryModal(key) {
+        const student = students.find(s => buildTestKey(s.name, s.date, s.testDist) === key);
+        if (!student) return;
+
+        const stats = calculateTestStats(student.timeSec, student.testDist);
+        
+        // Pega a string Base64 da variável global do arquivo externo (ex: logo-data.js)
+        const logoBase64Src = (typeof LOGO_BASE64 !== 'undefined' && LOGO_BASE64.base64) ? LOGO_BASE64.base64 : '';
+
+        const storyHtml = `
+            <div class="story-card-wrapper" id="storyExportCard">
+                <div class="story-header">
+                    ${logoBase64Src ? `<img src="${logoBase64Src}" alt="Logo C4" style="max-height: 55px; width: auto; object-fit: contain;">` : `<div style="font-family: 'Orbitron', sans-serif; font-weight: 900; color: var(--c4-cyan); font-size: 1.8rem; letter-spacing: -1px;">C4 PACE</div>`}
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 2px;">Assessoria Esportiva</div>
+                </div>
+
+                <div class="story-body">
+                    <div style="font-size: 0.82rem; color: var(--c4-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">⚡ Novo Teste de Pista ⚡</div>
+                    <h2 style="font-size: 1.6rem; font-weight: 900; color: #ffffff; line-height: 1.2;">${student.name}</h2>
+                    
+                    <div class="story-metric-badge">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Distância & Tempo</div>
+                        <div style="font-size: 2rem; font-weight: 900; color: var(--c4-cyan);">${student.testDist}m</div>
+                        <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff;">${formatTimeDisplay(student.timeStr)}</div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; width: 100%;">
+                        <div style="flex: 1; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">PACE MÉDIO</div>
+                            <div style="font-size: 1.15rem; font-weight: 900; color: var(--c4-cyan);">${stats.pace}</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">VAM FINAL</div>
+                            <div style="font-size: 1.15rem; font-weight: 900; color: var(--c4-cyan);">${stats.speed}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="story-footer">
+                    <span>📅 ${formatDate(student.date)}</span>
+                    <span style="font-weight: 800; color: var(--c4-cyan);">@c4_assessoria</span>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('storyContainer').innerHTML = storyHtml;
+        toggleStoryModal(true);
+    }
+
+    async function downloadStoryImage() {
+        const card = document.getElementById('storyExportCard');
+        if (!card) return;
+
+        const btn = document.getElementById('btnDownloadStory');
+        btn.innerHTML = '⏳ Gerando...';
+        btn.disabled = true;
+
+        try {
+            const canvas = await html2canvas(card, {
+                scale: 3,
+                useCORS: true,      // Libera o uso de recursos externos/base64 de forma segura
+                allowTaint: true,   // Permite o canvas sujo em contextos locais controlados
+                backgroundColor: '#080d1a',
+                logging: false
+            });
+
+            const imageURL = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.download = `Story_C4_${Date.now()}.png`;
+            a.href = imageURL;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            btn.innerHTML = '✅ Baixado!';
+        } catch (e) {
+            console.error('Erro ao gerar Story:', e);
+            alert('Não foi possível gerar a imagem diretamente: ' + e.message);
+            btn.innerHTML = '❌ Erro';
+        } finally {
+            setTimeout(() => {
+                btn.innerHTML = '📥 Baixar Story';
+                btn.disabled = false;
+            }, 2000);
+        }
+    }
+
+    function toggleSimulatorModal(show) {
+        document.getElementById('simulatorModal').classList.toggle('active', show);
+        if (show) {
+            const select = document.getElementById('simAthleteSelect');
+            select.innerHTML = '<option value="">-- Selecione um Aluno ou Digite os Dados Abaixo --</option>' + 
+                students.map(s => `<option value="${s.cleanName}">${s.name} (${s.testDist}m - ${formatTimeDisplay(s.timeStr)})</option>`).join('');
+            calculateSimulatorProjections();
+        }
+    }
+
+    function loadAthleteIntoSimulator() {
+        const cleanName = document.getElementById('simAthleteSelect').value;
+        if (!cleanName) return;
+
+        const student = students.find(s => s.cleanName === cleanName);
+        if (student) {
+            document.getElementById('simTestDist').value = student.testDist;
+            document.getElementById('simTestTime').value = student.timeStr;
+            calculateSimulatorProjections();
+        }
+    }
+
+    function formatSecondsToRaceTime(totalSec) {
+        if (!totalSec || isNaN(totalSec) || totalSec <= 0) return '-';
+        totalSec = Math.round(totalSec);
+        const hours = Math.floor(totalSec / 3600);
+        const minutes = Math.floor((totalSec % 3600) / 60);
+        const seconds = totalSec % 60;
+        const pad = (n) => String(n).padStart(2, '0');
+
+        return hours > 0 ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}` : `${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    function calculateSimulatorProjections() {
+        const distM = parseFloat(document.getElementById('simTestDist').value) || 3000;
+        const timeSec = timeToSeconds(document.getElementById('simTestTime').value);
+        const exponent = parseFloat(document.getElementById('simRiegelExponent').value) || 1.06;
+
+        if (!timeSec || distM <= 0) return;
+
+        const targetDistances = [
+            { name: "5 km", distM: 5000 },
+            { name: "10 km", distM: 10000 },
+            { name: "15 km", distM: 15000 },
+            { name: "21.1 km (Meia)", distM: 21097 },
+            { name: "42.2 km (Maratona)", distM: 42195 }
+        ];
+
+        let projHtml = '';
+        targetDistances.forEach(t => {
+            const projSec = timeSec * Math.pow((t.distM / distM), exponent);
+            const paceSec = projSec / (t.distM / 1000);
+            const reqVamPct = (((t.distM / projSec) / (distM / timeSec)) * 100).toFixed(1);
+
+            projHtml += `
+                <tr>
+                    <td><strong>${t.name}</strong></td>
+                    <td style="color: var(--c4-cyan); font-weight: 700;">${formatSecondsToRaceTime(projSec)}</td>
+                    <td>${formatSecondsToPace(paceSec)}/km</td>
+                    <td><span class="test-badge">${reqVamPct}% VAM</span></td>
+                </tr>
+            `;
+        });
+        document.getElementById('simProjectionsBody').innerHTML = projHtml;
+
+        let splitsHtml = '';
+        distanceConfigs.forEach(d => {
+            const minP = d.min || 100;
+            const maxP = d.max || 105;
+
+            const splitFast = calculateSplit(timeSec, distM, d.dist, maxP);
+            const splitSlow = calculateSplit(timeSec, distM, d.dist, minP);
+
+            splitsHtml += `
+                <tr>
+                    <td><strong>${d.dist}m</strong></td>
+                    <td><span class="test-badge">${minP}% ~ ${maxP}% VAM</span></td>
+                    <td style="color: var(--c4-cyan); font-weight: 700;">${secondsToFormatted(splitFast)} ~ ${secondsToFormatted(splitSlow)}</td>
+                    <td>⚡ ${calculatePaceFromSplit(splitFast, d.dist)} ~ ${calculatePaceFromSplit(splitSlow, d.dist)}/km</td>
+                </tr>
+            `;
+        });
+        document.getElementById('simSplitsBody').innerHTML = splitsHtml;
     }
 
     function resetAppLocalStorage() {
@@ -1656,7 +2180,6 @@
             localStorage.removeItem(STORAGE_KEY_STUDENTS);
             localStorage.removeItem(STORAGE_KEY_CONFIGS);
             localStorage.removeItem(STORAGE_KEY_VIEW);
-            alert("Dados apagados com sucesso! A página será recarregada.");
             window.location.reload();
         }
     }
@@ -1682,10 +2205,11 @@
 
     function switchConfigTab(tab) {
         document.querySelectorAll('.config-tab').forEach((el, idx) => {
-            el.classList.toggle('active', (idx === 0 && tab === 'dist') || (idx === 1 && tab === 'zone') || (idx === 2 && tab === 'alert'));
+            el.classList.toggle('active', (idx === 0 && tab === 'dist') || (idx === 1 && tab === 'zone') || (idx === 2 && tab === 'target') || (idx === 3 && tab === 'alert'));
         });
         document.getElementById('paneDist').classList.toggle('active', tab === 'dist');
         document.getElementById('paneZone').classList.toggle('active', tab === 'zone');
+        document.getElementById('paneTarget').classList.toggle('active', tab === 'target');
         document.getElementById('paneAlert').classList.toggle('active', tab === 'alert');
     }
 
@@ -1716,8 +2240,7 @@
         if (isNaN(sec) || sec <= 0) return '-';
         const m = Math.floor(sec / 60);
         const s = sec % 60;
-        if (m === 0) return `${s.toFixed(1)}s`;
-        return `${m}:${s < 10 ? '0' : ''}${s.toFixed(1)}`;
+        return m === 0 ? `${s.toFixed(1)}s` : `${m}:${s < 10 ? '0' : ''}${s.toFixed(1)}`;
     }
 
     function formatSecondsToPace(paceSecTotal) {
@@ -1760,6 +2283,17 @@
 
     function calculatePaceFromVamPct(testSec, testDist, pct) {
         return ((testSec / testDist) * 1000) / (pct / 100);
+    }
+
+    function getTargetProfileForDistance(distKm) {
+        if (!targetConfigs || targetConfigs.length === 0) {
+            return { label: 'Geral', zoneName: 'Z4/Z5', minPct: 85, maxPct: 95 };
+        }
+        const sorted = [...targetConfigs].sort((a, b) => a.maxKm - b.maxKm);
+        for (let p of sorted) {
+            if (distKm <= p.maxKm) return p;
+        }
+        return sorted[sorted.length - 1];
     }
 
     function formatDate(dateStr) {
@@ -1820,6 +2354,7 @@
 
     function updateWeekFilterOptions() {
         const select = document.getElementById('filterWeekSelect');
+        if (!select) return;
         const currentValue = select.value;
         const weeksMap = new Map();
 
@@ -1866,6 +2401,130 @@
         }
     }
 
+    function toggleTargetDetailModal(show) {
+        document.getElementById('targetDetailModal').classList.toggle('active', show);
+    }
+
+    function openTargetDetailModal(index) {
+        const item = targetRacesData[index];
+        if (!item) return;
+
+        const athleteName = item.nome || item.Atleta || item.atleta || item.ALUNO || 'Atleta';
+        const raceName = item.prova || item.Prova || item.provaAlvo || 'Prova Alvo';
+        const tempoBruto = String(item.tempoAlvo || item.tempo || '').trim();
+        const distanciaBruta = String(item.distancia || item.Distancia || '').trim();
+        const dataProva = item.dataProva || item.data || item.Data || '';
+
+        const distKm = parseDistanceKm(distanciaBruta);
+        const targetSec = timeToSeconds(tempoBruto);
+        const targetPaceFormatted = calculateTargetPace(tempoBruto, distanciaBruta);
+
+        const recentStudentTest = students
+            .filter(s => saoNomesIguais(s.name, athleteName))
+            .sort((a, b) => (parseDateString(b.date) || 0) - (parseDateString(a.date) || 0))[0];
+
+        document.getElementById('targetDetailModalTitle').innerText = `🔬 Diagnóstico: ${athleteName}`;
+
+        let contentHtml = '';
+
+        if (!recentStudentTest || !targetSec || distKm <= 0) {
+            contentHtml = `
+                <div class="empty-state" style="padding: 20px;">
+                    <p style="font-size: 1.1rem; color: var(--danger); font-weight: 700; margin-bottom: 8px;">Sem Teste de Pista Recente</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">
+                        Para gerar o diagnóstico fisiológico completo, registre um teste de pista para <strong>${athleteName}</strong>.
+                    </p>
+                </div>
+            `;
+            document.getElementById('btnShareTargetWhatsApp').style.display = 'none';
+        } else {
+            const requiredSpeed = (distKm * 1000) / targetSec;
+            const requiredSpeedKmH = (distKm / (targetSec / 3600)).toFixed(2);
+            const testVamSpeed = recentStudentTest.testDist / recentStudentTest.timeSec;
+            const testVamKmH = ((recentStudentTest.testDist / 1000) / (recentStudentTest.timeSec / 3600)).toFixed(2);
+            const testPace = calculateTestStats(recentStudentTest.timeSec, recentStudentTest.testDist).pace;
+            const requiredVamPct = (requiredSpeed / testVamSpeed) * 100;
+            const profile = getTargetProfileForDistance(distKm);
+
+            let statusColor = 'var(--success)';
+            let statusTitle = '🟢 Meta Atingível / Realista';
+            let statusExplain = `A exigência de <strong>${requiredVamPct.toFixed(1)}% da VAM</strong> está alinhada com a capacidade para ${distKm}km (${profile.minPct}% a ${profile.maxPct}% VAM).`;
+
+            if (requiredVamPct > profile.maxPct + 3.5) {
+                statusColor = 'var(--danger)';
+                statusTitle = '🔴 Meta Improvável / Incompatível';
+                statusExplain = `A exigência de <strong>${requiredVamPct.toFixed(1)}% da VAM</strong> excede o teto recomendado de ${profile.maxPct}% VAM para ${distKm}km.`;
+            } else if (requiredVamPct > profile.maxPct) {
+                statusColor = 'var(--warning)';
+                statusTitle = '🟡 Desafio Alto / Exige Pico de Performance';
+                statusExplain = `A exigência de <strong>${requiredVamPct.toFixed(1)}% da VAM</strong> está ligeiramente acima da média sustentável (${profile.minPct}% - ${profile.maxPct}% VAM).`;
+            }
+
+            contentHtml = `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(56, 189, 248, 0.08); padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">PROVA ALVO</div>
+                        <div style="font-size: 1.1rem; font-weight: 800; color: #ffffff;">${raceName} (${distanciaBruta})</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">DATA DA PROVA</div>
+                        <div style="font-size: 0.95rem; font-weight: 700; color: var(--c4-cyan);">${formatDate(dataProva) || '-'}</div>
+                    </div>
+                </div>
+
+                <div class="physio-grid">
+                    <div class="physio-card">
+                        <span class="physio-card-title">Tempo & Pace Alvo</span>
+                        <span class="physio-card-val">${formatTimeDisplay(tempoBruto)}</span>
+                        <span class="physio-card-sub">⚡ Ritmo: ${targetPaceFormatted} (${requiredSpeedKmH} km/h)</span>
+                    </div>
+
+                    <div class="physio-card">
+                        <span class="physio-card-title">Base de Teste (${recentStudentTest.testDist}m)</span>
+                        <span class="physio-card-val">${formatTimeDisplay(recentStudentTest.timeStr)}</span>
+                        <span class="physio-card-sub">⚡ Pace: ${testPace} (VAM: ${testVamKmH} km/h)</span>
+                    </div>
+
+                    <div class="physio-card">
+                        <span class="physio-card-title">% VAM Exigida</span>
+                        <span class="physio-card-val" style="color: ${statusColor};">${requiredVamPct.toFixed(1)}%</span>
+                        <span class="physio-card-sub">Faixa ideal: ${profile.minPct}% ~ ${profile.maxPct}% VAM</span>
+                    </div>
+
+                    <div class="physio-card">
+                        <span class="physio-card-title">Zona Predominante</span>
+                        <span class="physio-card-val" style="font-size: 0.98rem;">${profile.zoneName}</span>
+                        <span class="physio-card-sub">Perfil: ${profile.label}</span>
+                    </div>
+                </div>
+
+                <div class="physio-verdict-box">
+                    <div style="font-size: 0.95rem; font-weight: 800; color: ${statusColor}; margin-bottom: 6px;">
+                        ${statusTitle}
+                    </div>
+                    <div style="font-size: 0.82rem; line-height: 1.5; color: var(--text-main);">
+                        ${statusExplain}
+                    </div>
+                </div>
+            `;
+
+            const whatsAppMsg = `🔬 *C4 Assessoria - Análise de Meta*\n` +
+                `👤 *Atleta:* ${athleteName}\n` +
+                `🎯 *Prova:* ${raceName} (${distanciaBruta})\n` +
+                `⏱️ *Tempo Alvo:* ${formatTimeDisplay(tempoBruto)} (Pace: ${targetPaceFormatted})\n` +
+                `📊 *Exigência:* ${requiredVamPct.toFixed(1)}% VAM\n` +
+                `📌 *Diagnóstico:* ${statusTitle.replace(/[^\w\s/🟢🟡🔴]/gi, '')}\n\n` +
+                `Bora pra cima dos treinos! 🚀`;
+
+            const btnWpp = document.getElementById('btnShareTargetWhatsApp');
+            btnWpp.style.display = 'inline-flex';
+            btnWpp.onclick = () => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(whatsAppMsg)}`, '_blank');
+        }
+
+        document.getElementById('targetDetailModalContent').innerHTML = contentHtml;
+        toggleTargetDetailModal(true);
+    }
+
     function renderHistoryChart() {
         const selectedDist = parseInt(document.getElementById('chartDistanceSelect').value);
         if (!selectedDist) return;
@@ -1876,7 +2535,6 @@
 
         const labels = studentHistory.map(h => formatDate(h.date));
         const timeDataInSeconds = studentHistory.map(h => h.timeSec);
-
         const pointColors = [];
         const pointBorderColors = [];
 
@@ -1950,9 +2608,11 @@
                     <td style="font-size: 0.78rem;">⚡ ${stats.pace}<br>🚀 ${stats.speed}</td>
                     <td style="font-size: 0.75rem; color: var(--text-muted);">${h.obs || '-'}</td>
                     <td>
-                        <button class="btn-icon" onclick="exportStudentCertificate('${key}')" title="Visualizar / Baixar Certificado">🎴 Certificado</button>
-                        <button class="btn-icon" onclick="openEditModal('${key}')" title="Editar">✏️</button>
-                        <button class="btn-icon btn-danger" onclick="deleteStudent('${key}')" title="Excluir">🗑️</button>
+                        <button class="btn-icon" onclick="openStoryModal('${key}')" title="Gerar Story Instagram">📱</button>
+                        <button class="btn-icon" onclick="sendWhatsAppZones('${key}')" title="Enviar no WhatsApp">💬</button>
+                        <button class="btn-icon" onclick="exportStudentCertificate('${key}')" title="Visualizar Certificado">🎴</button>
+                        <button class="btn-icon" onclick="openEditModal('${key}')">✏️</button>
+                        <button class="btn-icon btn-danger" onclick="deleteStudent('${key}')">🗑️</button>
                     </td>
                 </tr>
             `;
@@ -2074,6 +2734,31 @@
         }
     }
 
+    function addNewTargetProfile() {
+        const maxKm = parseFloat(prompt('Distância Máxima (em km) para esta faixa (ex: 5, 10, 21.1):'));
+        if (!maxKm || maxKm <= 0) return;
+        const label = prompt('Nome de identificação:', `${maxKm}km`) || `${maxKm}km`;
+        const zoneName = prompt('Zona Fisiológica Típica:', 'Z4') || 'Z4';
+        const minPct = parseFloat(prompt('% VAM Mínima esperada:', '85')) || 85;
+        const maxPct = parseFloat(prompt('% VAM Máxima esperada (teto):', '90')) || 90;
+
+        targetConfigs.push({ maxKm, label, zoneName, minPct, maxPct });
+        targetConfigs.sort((a, b) => a.maxKm - b.maxKm);
+        saveData();
+        renderConfigGrids();
+        if (viewMode === 'target') renderTable();
+    }
+
+    function removeTargetProfile(index) {
+        if (targetConfigs.length <= 1) return alert('Mantenha ao menos um perfil de prova alvo.');
+        if (confirm(`Remover perfil "${targetConfigs[index].label}"?`)) {
+            targetConfigs.splice(index, 1);
+            saveData();
+            renderConfigGrids();
+            if (viewMode === 'target') renderTable();
+        }
+    }
+
     function renderConfigGrids() {
         const containerDist = document.getElementById('pctGridDist');
         if (containerDist) {
@@ -2103,6 +2788,27 @@
                         <input type="number" value="${z.max}" min="30" max="300" step="0.5" data-idx="${idx}" data-field="max" class="zone-input">
                     </div>
                     <button class="btn-icon btn-danger" onclick="removeZone(${idx})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        const containerTarget = document.getElementById('pctGridTarget');
+        if (containerTarget) {
+            containerTarget.innerHTML = targetConfigs.map((t, idx) => `
+                <div class="pct-row">
+                    <div style="display: flex; flex-direction: column; gap: 4px; min-width: 130px;">
+                        <input type="text" value="${t.label}" data-idx="${idx}" data-field="label" class="target-cfg-input" style="font-weight: 700; color: var(--c4-cyan); padding: 4px 6px; font-size: 0.82rem;">
+                        <input type="text" value="${t.zoneName}" data-idx="${idx}" data-field="zoneName" class="target-cfg-input" style="font-size: 0.72rem; color: var(--text-muted); padding: 2px 6px;">
+                    </div>
+                    <div class="pct-inputs">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Até (km)</span>
+                        <input type="number" value="${t.maxKm}" min="0.5" max="1000" step="0.5" data-idx="${idx}" data-field="maxKm" class="target-cfg-input" style="width: 70px;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Mín%</span>
+                        <input type="number" value="${t.minPct}" min="30" max="150" step="0.5" data-idx="${idx}" data-field="minPct" class="target-cfg-input" style="width: 65px;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Máx%</span>
+                        <input type="number" value="${t.maxPct}" min="30" max="150" step="0.5" data-idx="${idx}" data-field="maxPct" class="target-cfg-input" style="width: 65px;">
+                    </div>
+                    <button class="btn-icon btn-danger" onclick="removeTargetProfile(${idx})">🗑️</button>
                 </div>
             `).join('');
         }
@@ -2141,6 +2847,23 @@
             saveData();
             updateTableHeader();
             if (viewMode === 'zone') renderTable();
+        }
+    });
+
+    document.getElementById('pctGridTarget').addEventListener('change', (e) => {
+        if (e.target.classList.contains('target-cfg-input')) {
+            const idx = parseInt(e.target.dataset.idx);
+            const field = e.target.dataset.field;
+            
+            if (field === 'label' || field === 'zoneName') {
+                targetConfigs[idx][field] = e.target.value.trim();
+            } else {
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val)) targetConfigs[idx][field] = val;
+            }
+            targetConfigs.sort((a, b) => a.maxKm - b.maxKm);
+            saveData();
+            if (viewMode === 'target') renderTable();
         }
     });
 
@@ -2183,7 +2906,6 @@
             `;
         } else if (viewMode === 'zone') {
             html = `
-                <th style="width: 50px;">Ordem</th>
                 <th class="sortable" onclick="handleSort('name')">Aluno${getSortIcon('name')}</th>
                 <th class="sortable" onclick="handleSort('date')" style="text-align: center;">Teste / Data${getSortIcon('date')}</th>
             `;
@@ -2193,7 +2915,6 @@
             html += `<th style="text-align: center;">Ações</th>`;
         } else {
             html = `
-                <th style="width: 50px;">Ordem</th>
                 <th class="sortable" onclick="handleSort('name')">Aluno${getSortIcon('name')}</th>
                 <th class="sortable" onclick="handleSort('date')" style="text-align: center;">Teste / Data${getSortIcon('date')}</th>
             `;
@@ -2248,7 +2969,7 @@
             });
         }
 
-        const colCount = (viewMode === 'zone' ? zoneConfigs.length : distanceConfigs.length) + 4;
+        const colCount = (viewMode === 'zone' ? zoneConfigs.length : distanceConfigs.length) + 3;
 
         if (filteredStudents.length === 0) {
             tbody.innerHTML = `<tr><td colspan="${colCount}"><div class="empty-state">Nenhum aluno encontrado.</div></td></tr>`;
@@ -2306,12 +3027,6 @@
             fullTableHtml += `
                 <tr>
                     <td>
-                        <div style="display: flex; gap: 2px; justify-content: center;">
-                            <button class="btn-icon" onclick="moveStudent('${key}', -1)">▲</button>
-                            <button class="btn-icon" onclick="moveStudent('${key}', 1)">▼</button>
-                        </div>
-                    </td>
-                    <td>
                         <span class="student-name" onclick="toggleHistoryModal(true, '${student.name.replace(/'/g, "\\'")}')">${student.name}</span>
                         ${obsHtml}
                     </td>
@@ -2329,7 +3044,9 @@
                     ${dataCells}
                     <td style="text-align: center;">
                         <div style="display: flex; gap: 4px; justify-content: center;">
-                            <button class="btn-icon" onclick="exportStudentCertificate('${key}')" title="Visualizar / Baixar Certificado">🎴</button>
+                            <button class="btn-icon" onclick="openStoryModal('${key}')" title="Gerar Story Instagram">📱</button>
+                            <button class="btn-icon" onclick="sendWhatsAppZones('${key}')" title="Enviar no WhatsApp">💬</button>
+                            <button class="btn-icon" onclick="exportStudentCertificate('${key}')" title="Visualizar Certificado">🎴</button>
                             <button class="btn-icon" onclick="openEditModal('${key}')">✏️</button>
                             <button class="btn-icon btn-danger" onclick="deleteStudent('${key}')">🗑️</button>
                         </div>
@@ -2354,7 +3071,7 @@
         const searchNorm = normalizarNome(searchQuery);
         const selectedTargetDist = document.getElementById('filterTargetDistanceSelect').value;
 
-        let filteredRaces = targetRacesData.filter(item => {
+        let filteredRaces = targetRacesData.map((item, originalIndex) => ({ ...item, originalIndex })).filter(item => {
             const nameNorm = normalizarNome(item.nome || '');
             const nameMatch = !searchNorm || nameNorm.includes(searchNorm) || saoNomesIguais(item.nome || '', searchQuery);
             const raceMatch = (item.prova || '').toLowerCase().includes(searchQuery.toLowerCase());
@@ -2400,18 +3117,35 @@
                 .filter(s => saoNomesIguais(s.name, item.nome || ''))
                 .sort((a, b) => (parseDateString(b.date) || 0) - (parseDateString(a.date) || 0))[0];
 
-            let capabilityHtml = '<span class="status-tag status-alert">⚪ Sem Teste de Pista</span>';
+            let capabilityHtml = '<div class="capability-interactive-card" onclick="openTargetDetailModal(' + item.originalIndex + ')"><span class="status-tag status-alert">⚪ Sem Teste de Pista</span></div>';
 
             if (recentStudentTest && targetSec && distKm > 0) {
-                const testStats = calculateTestStats(recentStudentTest.timeSec, recentStudentTest.testDist);
-                const targetPaceSec = targetSec / distKm;
-                const testBasePaceSec = (recentStudentTest.timeSec / recentStudentTest.testDist) * 1000;
+                const requiredSpeed = (distKm * 1000) / targetSec;
+                const testVamSpeed = recentStudentTest.testDist / recentStudentTest.timeSec;
+                const requiredVamPct = (requiredSpeed / testVamSpeed) * 100;
+                const profile = getTargetProfileForDistance(distKm);
 
-                if ((testBasePaceSec / targetPaceSec) <= 1.05) {
-                    capabilityHtml = `<div style="font-size: 0.75rem; text-align: center;"><span class="status-tag status-ok">🟢 Meta Atingível</span><br><span class="hint">Teste: ${testStats.pace}</span></div>`;
+                let statusTag = '';
+                let statusDesc = '';
+
+                if (requiredVamPct <= profile.maxPct) {
+                    statusTag = '<span class="status-tag status-ok">🟢 Meta Atingível</span>';
+                    statusDesc = `${requiredVamPct.toFixed(1)}% VAM (${profile.zoneName})`;
+                } else if (requiredVamPct <= profile.maxPct + 3.5) {
+                    statusTag = '<span class="status-tag status-warn">🟡 Desafio Alto</span>';
+                    statusDesc = `${requiredVamPct.toFixed(1)}% VAM (Teto ideal: ${profile.maxPct}%)`;
                 } else {
-                    capabilityHtml = `<div style="font-size: 0.75rem; text-align: center;"><span class="status-tag status-warn">🟡 Desafio Alto</span><br><span class="hint">Teste: ${testStats.pace}</span></div>`;
+                    statusTag = '<span class="status-tag status-alert">🔴 Meta Improvável</span>';
+                    statusDesc = `${requiredVamPct.toFixed(1)}% VAM (Incompatível p/ ${distKm}km)`;
                 }
+
+                capabilityHtml = `
+                    <div class="capability-interactive-card" onclick="openTargetDetailModal(${item.originalIndex})" title="Clique para ver o diagnóstico fisiológico completo">
+                        ${statusTag}<br>
+                        <span class="hint" style="color: var(--c4-cyan); font-weight: 600;">${statusDesc}</span>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">🔍 Detalhes</div>
+                    </div>
+                `;
             }
 
             fullTableHtml += `
@@ -2429,19 +3163,6 @@
 
         tbody.innerHTML = fullTableHtml;
         setTimeout(updateScrollProxyWidth, 50);
-    }
-
-    function moveStudent(key, direction) {
-        const index = students.findIndex(s => buildTestKey(s.name, s.date, s.testDist) === key);
-        if (index === -1) return;
-        const newIndex = index + direction;
-        if (newIndex < 0 || newIndex >= students.length) return;
-        
-        const temp = students[index];
-        students[index] = students[newIndex];
-        students[newIndex] = temp;
-        saveData();
-        renderTable();
     }
 
     function deleteStudent(key) {
@@ -2491,9 +3212,7 @@
     let searchDebounceTimeout = null;
     document.getElementById('searchInput').addEventListener('input', () => {
         clearTimeout(searchDebounceTimeout);
-        searchDebounceTimeout = setTimeout(() => {
-            renderTable();
-        }, 150);
+        searchDebounceTimeout = setTimeout(renderTable, 150);
     });
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -2502,6 +3221,7 @@
         loadFromLocalStorage();
         updateTableHeader();
         updateWeekFilterOptions();
+        updateDashboardMetrics();
         switchViewMode(viewMode);
 
         setTimeout(syncWithGoogleSheets, 300);
