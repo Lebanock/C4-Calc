@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pace Analytics</title>
+    <title>C4 - Pace Analytics</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <script src="logo-data.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link rel="icon" type="image/x-icon" href="logoaba.png">
     <style>
         /* 1. VARIÁVEIS CSS */
         :root {
@@ -1056,30 +1055,50 @@
 
     <div class="card" style="padding: 0; overflow: hidden;">
         <div class="toolbar-container">
-            <div class="filters-group">
-                <div class="search-box">
+            <div class="filters-group" id="filtersGroup">
+                <!-- Busca de Aluno (Comum) -->
+                <div class="search-box" id="searchBoxContainer">
                     <span class="search-icon">🔍</span>
                     <input type="text" id="searchInput" placeholder="Nome...">
                 </div>
-                <select id="filterWeekSelect" class="filter-select">
+
+                <!-- Filtros para Modos Padrão (Testes, Distâncias, Zonas, Evolução) -->
+                <select id="filterWeekSelect" class="filter-select default-filter">
                     <option value="all">Semanas (Todas)</option>
                 </select>
-                <select id="filterTestSelect" class="filter-select">
+                <select id="filterTestSelect" class="filter-select default-filter">
                     <option value="all">Distâncias</option>
                 </select>
-                <select id="filterStatusSelect" class="filter-select">
+                <select id="filterStatusSelect" class="filter-select default-filter">
                     <option value="all">Status</option>
                     <option value="ok">🟢 Recentes</option>
                     <option value="warn">🟡 Atenção</option>
                     <option value="alert">🔴 Vencidos</option>
                 </select>
-                <select id="filterSortSelect" class="filter-select">
+                <select id="filterSortSelect" class="filter-select default-filter">
                     <option value="date_desc">📅 Mais recente → Mais antigo</option>
                     <option value="date_asc">⏳ Mais antigo → Mais recente</option>
                     <option value="time_asc">⚡ Mais forte (Menor tempo)</option>
                     <option value="time_desc">🐢 Mais fraco (Maior tempo)</option>
                 </select>
+
+                <!-- Filtros Específicos para Provas Alvo -->
+                <select id="filterTargetDistSelect" class="filter-select target-filter" style="display: none;">
+                    <option value="all">Distância da Prova (Todas)</option>
+                    <option value="5">5 km</option>
+                    <option value="10">10 km</option>
+                    <option value="21">21 km</option>
+                    <option value="42">42 km</option>
+                </select>
+                <select id="filterTargetDiagSelect" class="filter-select target-filter" style="display: none;">
+                    <option value="all">Diagnóstico VAM (Todos)</option>
+                    <option value="sem_teste">Sem teste</option>
+                    <option value="acima">🔴 Acima da faixa</option>
+                    <option value="limite">🟡 Próximo ao limite</option>
+                    <option value="dentro">🟢 Dentro da faixa</option>
+                </select>
             </div>
+
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="view-mode-bar">
                     <button class="view-mode-btn active" id="btnModeTests" data-mode="tests">Testes</button>
@@ -1412,10 +1431,12 @@ function initDOM() {
     [
         "dashboard", "dashTotalAthletes", "dashTotalTests", "dashValidTestsPct",
         "dashPRCount", "dashSingleTestAthletes", "dashImprovedAthletes",
-        "searchInput", "filterWeekSelect", "filterTestSelect", "filterStatusSelect",
-        "filterSortSelect", "viewContent", "historyModal", "configModal", "directCertModal",
-        "storyModal", "dashModal", "targetDetailModal", "pinModal", "pinForm", "inputPinCode",
-        "pinErrorMsg", "btnSubmitPin", "btnChangePin", "scrollbarProxy", "scrollbarProxyContent",
+        "filtersGroup", "searchBoxContainer", "searchInput", "filterWeekSelect",
+        "filterTestSelect", "filterStatusSelect", "filterSortSelect",
+        "filterTargetDistSelect", "filterTargetDiagSelect", "viewContent",
+        "historyModal", "configModal", "directCertModal", "storyModal", "dashModal",
+        "targetDetailModal", "pinModal", "pinForm", "inputPinCode", "pinErrorMsg",
+        "btnSubmitPin", "btnChangePin", "scrollbarProxy", "scrollbarProxyContent",
         "tableResponsive", "saveStatus", "mainLogoImg", "btnThemeToggle", "btnPrivacyMode",
         "btnToggleAddForm", "btnExportExcel", "btnOpenConfig", "addFormCard", "addFormCardTitle",
         "addFormContent", "addStudentForm", "formTitle", "formToggleIcon", "studentName",
@@ -1822,6 +1843,27 @@ function actionButtonsHtml(student) {
     `;
 }
 
+function updateToolbarVisibility() {
+    const mode = AppState.ui.viewMode;
+    const defaultFilters = document.querySelectorAll('.default-filter');
+    const targetFilters = document.querySelectorAll('.target-filter');
+    const searchBox = DOM.searchBoxContainer;
+
+    if (mode === 'advanced') {
+        if (searchBox) searchBox.style.display = 'none';
+        defaultFilters.forEach(f => f.style.display = 'none');
+        targetFilters.forEach(f => f.style.display = 'none');
+    } else if (mode === 'target') {
+        if (searchBox) searchBox.style.display = 'block';
+        defaultFilters.forEach(f => f.style.display = 'none');
+        targetFilters.forEach(f => f.style.display = 'block');
+    } else {
+        if (searchBox) searchBox.style.display = 'block';
+        defaultFilters.forEach(f => f.style.display = 'block');
+        targetFilters.forEach(f => f.style.display = 'none');
+    }
+}
+
 function applyFilters(list) {
     const searchQuery = DOM.searchInput ? DOM.searchInput.value.trim() : '';
     const searchNorm = normalizarNome(searchQuery);
@@ -1994,7 +2036,12 @@ function renderEvolutionView(studentsFiltered) {
 function renderTargetsView() {
     if (!AppState.targetRacesData.length) return '<div class="empty-state">Nenhuma Prova Alvo carregada. Sincronize com o Google Sheets.</div>';
 
-    let rows = AppState.targetRacesData.map((item, index) => {
+    const searchQuery = DOM.searchInput ? DOM.searchInput.value.trim() : '';
+    const searchNorm = normalizarNome(searchQuery);
+    const targetDistFilter = DOM.filterTargetDistSelect ? DOM.filterTargetDistSelect.value : 'all';
+    const targetDiagFilter = DOM.filterTargetDiagSelect ? DOM.filterTargetDiagSelect.value : 'all';
+
+    let list = AppState.targetRacesData.map((item, originalIndex) => {
         const nome = item.nome || item.Atleta || 'Atleta';
         const prova = item.prova || item.Prova || 'Prova Alvo';
         const distStr = item.distancia || item.Distancia || '';
@@ -2005,7 +2052,9 @@ function renderTargetsView() {
         const targetSec = timeToSeconds(tempoStr);
         const recent = AppState.students.filter(s => saoNomesIguais(s.name, nome)).sort((a, b) => (parseDateString(b.date) || 0) - (parseDateString(a.date) || 0))[0];
 
-        let diag = '<span class="status-tag status-warn">Sem Teste</span>';
+        let diagStatusKey = 'sem_teste';
+        let diagHtml = '<span class="status-tag status-warn">Sem Teste</span>';
+
         if (recent && targetSec && distKm > 0) {
             const reqSpeed = (distKm * 1000) / targetSec;
             const testSpeed = recent.testDist / recent.timeSec;
@@ -2015,26 +2064,68 @@ function renderTargetsView() {
 
             let cls = 'ok';
             let labelText = '🟢 Dentro da faixa observada';
+            diagStatusKey = 'dentro';
 
             if (reqPct > profile.maxPct + 3.5) {
                 cls = 'alert';
                 labelText = '🔴 Acima da faixa observada';
+                diagStatusKey = 'acima';
             } else if (reqPct > profile.maxPct) {
                 cls = 'warn';
                 labelText = '🟡 Próximo ao limite';
+                diagStatusKey = 'limite';
             }
 
-            diag = statusTag(cls, `${labelText} (${reqPct.toFixed(1)}% VAM)`);
+            diagHtml = statusTag(cls, `${labelText} (${reqPct.toFixed(1)}% VAM)`);
         }
 
+        return {
+            originalIndex,
+            nome,
+            cleanName: normalizarNome(nome),
+            prova,
+            distStr,
+            distKm,
+            tempoStr,
+            dataP,
+            diagStatusKey,
+            diagHtml
+        };
+    });
+
+    // Aplicação dos Filtros de Provas Alvo
+    list = list.filter(item => {
+        const matchesName = !searchNorm || item.cleanName.includes(searchNorm) || saoNomesIguais(item.nome, searchQuery);
+        
+        let matchesDist = true;
+        if (targetDistFilter !== 'all') {
+            const fDist = parseFloat(targetDistFilter);
+            if (fDist === 5) matchesDist = (item.distKm >= 4.5 && item.distKm <= 5.5);
+            else if (fDist === 10) matchesDist = (item.distKm >= 9.0 && item.distKm <= 10.5);
+            else if (fDist === 21) matchesDist = (item.distKm >= 20.0 && item.distKm <= 22.0);
+            else if (fDist === 42) matchesDist = (item.distKm >= 40.0 && item.distKm <= 43.5);
+            else matchesDist = (Math.round(item.distKm) === fDist);
+        }
+
+        let matchesDiag = true;
+        if (targetDiagFilter !== 'all') {
+            matchesDiag = (item.diagStatusKey === targetDiagFilter);
+        }
+
+        return matchesName && matchesDist && matchesDiag;
+    });
+
+    if (!list.length) return '<div class="empty-state">Nenhuma Prova Alvo corresponde aos filtros selecionados.</div>';
+
+    let rows = list.map(item => {
         return `
             <tr>
-                <td class="col-atleta"><strong class="${getPrivacyBlurClass('studentName')}">${nome}</strong></td>
-                <td style="color: var(--c4-cyan); font-weight: 600;"><span class="${getPrivacyBlurClass('targetRace')}">🏁 ${prova}</span></td>
-                <td><span class="test-badge">${distStr}</span></td>
-                <td>${metricChip(`📅 ${formatDate(dataP)}`, '')}</td>
-                <td class="test-info"><span class="metric-chip time-bold ${getPrivacyBlurClass('targetTime')}">⏱️ ${formatTimeDisplay(tempoStr)}</span></td>
-                <td><div style="cursor: pointer;" data-action="target-detail" data-index="${index}">${diag}</div></td>
+                <td class="col-atleta"><strong class="${getPrivacyBlurClass('studentName')}">${item.nome}</strong></td>
+                <td style="color: var(--c4-cyan); font-weight: 600;"><span class="${getPrivacyBlurClass('targetRace')}">🏁 ${item.prova}</span></td>
+                <td><span class="test-badge">${item.distStr}</span></td>
+                <td>${metricChip(`📅 ${formatDate(item.dataP)}`, '')}</td>
+                <td class="test-info"><span class="metric-chip time-bold ${getPrivacyBlurClass('targetTime')}">⏱️ ${formatTimeDisplay(item.tempoStr)}</span></td>
+                <td><div style="cursor: pointer;" data-action="target-detail" data-index="${item.originalIndex}">${item.diagHtml}</div></td>
             </tr>
         `;
     }).join('');
@@ -2128,6 +2219,7 @@ function renderAdvancedView() {
 
 function renderTable() {
     if (!DOM.viewContent) return;
+    updateToolbarVisibility();
     const mode = AppState.ui.viewMode;
     const allFiltered = filteredStudents();
     const latestList = getLatestTestsPerDistance(allFiltered);
@@ -3288,6 +3380,8 @@ function bindEvents() {
     if (DOM.filterTestSelect) DOM.filterTestSelect.addEventListener('change', renderTable);
     if (DOM.filterStatusSelect) DOM.filterStatusSelect.addEventListener('change', renderTable);
     if (DOM.filterSortSelect) DOM.filterSortSelect.addEventListener('change', renderTable);
+    if (DOM.filterTargetDistSelect) DOM.filterTargetDistSelect.addEventListener('change', renderTable);
+    if (DOM.filterTargetDiagSelect) DOM.filterTargetDiagSelect.addEventListener('change', renderTable);
 
     // Delegação de cliques para tabelas dinâmicas e modais
     document.body.addEventListener('click', (e) => {
