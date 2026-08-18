@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pace Analytics</title>
+    <title>C4 - Pace Analytics</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
@@ -52,6 +52,16 @@
         header h1 { font-size: 1.8rem; font-weight: 800; background: linear-gradient(to right, var(--text-main), var(--c4-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 1px; }
         header p { color: var(--text-muted); font-size: 0.88rem; }
         .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        /* TOAST CONTAINER & CARDS */
+        #toastContainer { position: fixed; top: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { pointer-events: auto; min-width: 280px; max-width: 380px; padding: 12px 18px; border-radius: 12px; font-size: 0.88rem; font-weight: 600; color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(14, 165, 233, 0.15); display: flex; align-items: center; justify-content: space-between; gap: 12px; backdrop-filter: blur(10px); animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 255, 255, 0.1); transition: opacity 0.3s, transform 0.3s; }
+        .toast.toast-out { opacity: 0; transform: translateX(50px); }
+        .toast-success { background: rgba(16, 185, 129, 0.95); border-color: rgba(16, 185, 129, 0.4); }
+        .toast-error { background: rgba(239, 68, 68, 0.95); border-color: rgba(239, 68, 68, 0.4); }
+        .toast-info { background: rgba(2, 132, 199, 0.95); border-color: rgba(56, 189, 248, 0.4); }
+        .toast-warning { background: rgba(245, 158, 11, 0.95); border-color: rgba(245, 158, 11, 0.4); }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
         .dash-card { background: var(--bg-card); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; backdrop-filter: blur(4px); cursor: pointer; transition: all 0.2s; }
@@ -132,7 +142,7 @@
         .col-atleta { width: 1%; white-space: nowrap; }
         tr:hover { background-color: rgba(56, 189, 248, 0.03); }
 
-        .student-name {font-weight: 600;color: var(--c4-cyan); cursor: pointer; text-decoration: underline; text-decoration-style: solid; text-underline-offset: 4px; transition: color 0.2s;}
+        .student-name { font-weight: 600; color: var(--c4-cyan); cursor: pointer; text-decoration: underline; text-decoration-style: solid; text-underline-offset: 4px; transition: color 0.2s; }
         .student-name:hover { color: #7dd3fc; }
         .test-info { color: var(--c4-cyan); font-weight: 600; }
         .test-stats { font-size: 0.73rem; color: var(--c4-cyan); font-weight: 500; margin-top: 3px; }
@@ -261,6 +271,8 @@
     </style>
 </head>
 <body>
+
+<div id="toastContainer"></div>
 
 <div class="container">
     <header>
@@ -652,7 +664,31 @@ const DOM = {};
 function initDOM() { document.querySelectorAll('[id]').forEach(el => DOM[el.id] = el); }
 
 /* =========================================================================
-   3. UTILITÁRIOS
+   3. TOAST NOTIFICATIONS
+   ========================================================================= */
+function showToast(message, type = 'info', duration = 3000) {
+    const container = DOM.toastContainer || $('toastContainer');
+    if (!container) return;
+
+    const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<span>${icons[type] || '✨'} ${message}</span><button style="background:transparent;border:none;color:#fff;cursor:pointer;font-size:1.1rem;line-height:1;">&times;</button>`;
+
+    const closeBtn = toast.querySelector('button');
+    const removeToast = () => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+    };
+
+    closeBtn.onclick = removeToast;
+    container.appendChild(toast);
+
+    setTimeout(removeToast, duration);
+}
+
+/* =========================================================================
+   4. UTILITÁRIOS
    ========================================================================= */
 const generateUid = () => 't_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
@@ -803,7 +839,7 @@ function renderConditionsCellHtml(s) {
 }
 
 /* =========================================================================
-   4. STORAGE & SYNC
+   5. STORAGE & SYNC
    ========================================================================= */
 const getSavedPin = () => localStorage.getItem(STORAGE_KEYS.PIN) || '';
 const setSavedPin = p => localStorage.setItem(STORAGE_KEYS.PIN, p);
@@ -840,7 +876,7 @@ function saveData() {
 }
 
 /* =========================================================================
-   5. RENDERIZAÇÃO
+   6. RENDERIZAÇÃO
    ========================================================================= */
 const metricChip = (text, cls = "cyan") => `<span class="metric-chip ${cls}">${text}</span>`;
 const statusTag = (type, text) => `<span class="status-tag status-${type}">${text}</span>`;
@@ -1172,7 +1208,7 @@ function renderConfigGrids() {
 }
 
 /* =========================================================================
-   6. CHARTS
+   7. CHARTS
    ========================================================================= */
 function renderHistoryChart() {
     const a = AppState.students.filter(s => saoNomesIguais(s.name, AppState.ui.currentHistoryStudent)).sort((x, y) => (parseDateString(x.date) || 0) - (parseDateString(y.date) || 0));
@@ -1213,7 +1249,7 @@ function renderAdvancedCharts(s1000, s3000) {
 }
 
 /* =========================================================================
-   7. CERTIFICADOS & STORIES
+   8. CERTIFICADOS & STORIES
    ========================================================================= */
 function buildCertificateHtml(s, style = 'zones') {
     const stats = calculateTestStats(s.timeSec, s.testDist);
@@ -1273,7 +1309,7 @@ function buildStoryHtml(s) {
 }
 
 /* =========================================================================
-   8. SHEETS API & EXPORTAÇÕES / BULK ACTIONS
+   9. SHEETS API & EXPORTAÇÕES / BULK ACTIONS
    ========================================================================= */
 async function syncWithGoogleSheets(customPin = null) {
     const pin = customPin || getSavedPin();
@@ -1287,6 +1323,7 @@ async function syncWithGoogleSheets(customPin = null) {
             removeSavedPin();
             if (DOM.pinErrorMsg) DOM.pinErrorMsg.style.display = 'block';
             togglePinModal(true);
+            showToast('PIN incorreto ou acesso negado', 'error');
             return false;
         }
         setSavedPin(pin);
@@ -1310,9 +1347,11 @@ async function syncWithGoogleSheets(customPin = null) {
         renderTable();
         updateDashboardMetrics();
         if (DOM.saveStatus) DOM.saveStatus.innerText = '☁️ Sincronizado';
+        showToast('Dados sincronizados com o Sheets!', 'success');
         return true;
     } catch (e) {
         if (DOM.saveStatus) DOM.saveStatus.innerText = '⚠️ Erro Sync';
+        showToast('Falha na comunicação com o Sheets.', 'error');
         return false;
     }
 }
@@ -1332,9 +1371,9 @@ async function postToSheets(action, payload) {
 }
 
 function exportToExcel(customList = null) {
-    if (!window.XLSX) return alert('Biblioteca Excel não carregada.');
+    if (!window.XLSX) return showToast('Biblioteca Excel não carregada.', 'error');
     const list = customList || AppState.students;
-    if (!list.length) return alert('Nenhum dado selecionado.');
+    if (!list.length) return showToast('Nenhum dado para exportar.', 'warning');
     const wb = XLSX.utils.book_new();
     const rows = list.map(s => ({
         'Nome': s.name, 'Distância (m)': s.testDist, 'Data': formatDate(s.date), 'Tempo': formatTimeDisplay(s.timeStr),
@@ -1343,6 +1382,7 @@ function exportToExcel(customList = null) {
     }));
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), "Testes");
     XLSX.writeFile(wb, `c4_pace_${new Date().toISOString().split('T')[0]}.xlsx`);
+    showToast('Planilha Excel exportada com sucesso!', 'success');
 }
 
 async function downloadCertAsPdf() {
@@ -1352,10 +1392,11 @@ async function downloadCertAsPdf() {
     const pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
     pdf.save(`Certificado_${normalizarNome(AppState.ui.currentExportStudent.name).replace(/\s+/g, '_')}_${AppState.ui.currentExportStudent.testDist}m.pdf`);
+    showToast('Certificado baixado em PDF!', 'success');
 }
 
 async function bulkDownloadStories(selectedList) {
-    if (!selectedList.length) return alert('Nenhum teste selecionado.');
+    if (!selectedList.length) return showToast('Nenhum teste selecionado.', 'warning');
     const btn = DOM.btnBulkDownloadStories;
     const originalText = btn.innerHTML;
     btn.disabled = true;
@@ -1378,11 +1419,12 @@ async function bulkDownloadStories(selectedList) {
 
     DOM.batchRenderContainer.innerHTML = '';
     btn.innerHTML = `✅ Stories Concluídos!`;
+    showToast(`${selectedList.length} stories baixados!`, 'success');
     setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
 }
 
 async function bulkDownloadCertificates(selectedList) {
-    if (!selectedList.length) return alert('Nenhum teste selecionado.');
+    if (!selectedList.length) return showToast('Nenhum teste selecionado.', 'warning');
     const btn = DOM.btnBulkDownloadCerts;
     const originalText = btn.innerHTML;
     btn.disabled = true;
@@ -1408,11 +1450,12 @@ async function bulkDownloadCertificates(selectedList) {
 
     DOM.batchRenderContainer.innerHTML = '';
     btn.innerHTML = `✅ Certificados Concluídos!`;
+    showToast(`${selectedList.length} certificados baixados!`, 'success');
     setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
 }
 
 /* =========================================================================
-   9. MODAIS & EVENTOS
+   10. MODAIS & EVENTOS
    ========================================================================= */
 function openDashModal(type) {
     let title = '', tableHtml = '';
@@ -1575,6 +1618,7 @@ function bindEvents() {
         AppState.ui.privacyEnabled = !AppState.ui.privacyEnabled;
         DOM.btnPrivacyMode.classList.toggle('privacy-active', AppState.ui.privacyEnabled);
         renderTable();
+        showToast(AppState.ui.privacyEnabled ? 'Modo Privacidade ativado 🕶️' : 'Modo Privacidade desativado 👁️', 'info');
     });
 
     const toggleForm = () => {
@@ -1646,11 +1690,12 @@ function bindEvents() {
         if (km > 0) { AppState.config.targetConfigs.push({ maxKm: km, label: `${km}km`, zoneName: 'Z4', minPct: 85, maxPct: 90 }); AppState.config.targetConfigs.sort((a,b)=>a.maxKm-b.maxKm); renderConfigGrids(); }
     });
 
-    DOM.btnSaveConfigModal?.addEventListener('click', () => { saveData(); fillDistanceFormSelect(); updateDistanceFilterOptions(); renderTable(); DOM.configModal?.classList.remove('active'); });
+    DOM.btnSaveConfigModal?.addEventListener('click', () => { saveData(); fillDistanceFormSelect(); updateDistanceFilterOptions(); renderTable(); DOM.configModal?.classList.remove('active'); showToast('Configurações salvas!', 'success'); });
 
     DOM.btnExportDataBackup?.addEventListener('click', () => {
         const blob = new Blob([JSON.stringify({ ...AppState.config, students: AppState.students }, null, 2)], { type: 'application/json' });
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `c4_backup_${new Date().toISOString().split('T')[0]}.json`; a.click();
+        showToast('Backup JSON baixado!', 'success');
     });
 
     DOM.btnTriggerImportDataBackup?.addEventListener('click', () => DOM.backupFileInput?.click());
@@ -1663,8 +1708,8 @@ function bindEvents() {
                     const d = JSON.parse(evt.target.result);
                     if (d.students) AppState.students = d.students.map(normalizeStudent);
                     if (d.testDistances) AppState.config.testDistances = d.testDistances;
-                    saveData(); fillDistanceFormSelect(); updateDistanceFilterOptions(); renderTable(); alert('Backup restaurado!');
-                } catch (err) { alert('Erro no backup.'); }
+                    saveData(); fillDistanceFormSelect(); updateDistanceFilterOptions(); renderTable(); showToast('Backup restaurado com sucesso!', 'success');
+                } catch (err) { showToast('Erro ao ler arquivo de backup.', 'error'); }
             };
             r.readAsText(f);
         }
@@ -1672,7 +1717,7 @@ function bindEvents() {
 
     DOM.btnResetLocalStorage?.addEventListener('click', () => { if (confirm("Limpar dados locais?")) { localStorage.clear(); window.location.reload(); } });
 
-    // Ações em Lote (Excel, Resumo, Stories, Certificados, Exclusão)
+    // Ações em Lote (Excel, Resumo, Stories, Certificados, Exclusão com chamada única)
     DOM.btnBulkExportExcel?.addEventListener('click', () => {
         const sel = AppState.students.filter(s => AppState.selectedKeys.has(buildTestKey(s.name, s.date, s.testDist)));
         exportToExcel(sel);
@@ -1680,9 +1725,9 @@ function bindEvents() {
 
     DOM.btnBulkCopyReport?.addEventListener('click', () => {
         const list = AppState.students.filter(s => AppState.selectedKeys.has(buildTestKey(s.name, s.date, s.testDist)));
-        if (!list.length) return alert('Nenhum teste selecionado.');
+        if (!list.length) return showToast('Nenhum teste selecionado.', 'warning');
         const text = `🏃 *C4 ASSESSORIA - RESUMO*\n\n` + list.map((s, i) => `${i+1}. *${s.name}* | ${s.testDist}m em ${formatTimeDisplay(s.timeStr)} (${calculateTestStats(s.timeSec, s.testDist).pace}) - 📅 ${formatDate(s.date)}`).join('\n');
-        navigator.clipboard.writeText(text).then(() => alert('📋 Resumo copiado!'));
+        navigator.clipboard.writeText(text).then(() => showToast('Resumo copiado para a área de transferência!', 'success'));
     });
 
     DOM.btnBulkDownloadStories?.addEventListener('click', () => {
@@ -1696,12 +1741,28 @@ function bindEvents() {
     });
 
     DOM.btnBulkDelete?.addEventListener('click', async () => {
-        if (confirm(`Excluir permanentemente os ${AppState.selectedKeys.size} testes selecionados?`)) {
-            const keys = Array.from(AppState.selectedKeys), ids = [];
-            AppState.students.forEach(s => { if (keys.includes(buildTestKey(s.name, s.date, s.testDist)) && s.id) ids.push(s.id); });
+        const count = AppState.selectedKeys.size;
+        if (confirm(`Excluir permanentemente os ${count} testes selecionados?`)) {
+            const keys = Array.from(AppState.selectedKeys);
+            const idsToDelete = [];
+            AppState.students.forEach(s => {
+                if (keys.includes(buildTestKey(s.name, s.date, s.testDist)) && s.id) {
+                    idsToDelete.push(String(s.id));
+                }
+            });
+
             AppState.students = AppState.students.filter(s => !keys.includes(buildTestKey(s.name, s.date, s.testDist)));
-            clearSelection(); saveData(); renderTable();
-            for (const id of ids) await postToSheets('excluirTeste', { id: String(id) });
+            clearSelection();
+            saveData();
+            renderTable();
+
+            if (idsToDelete.length) {
+                const ok = await postToSheets('excluirTestesEmLote', { ids: idsToDelete });
+                if (ok) showToast(`${count} testes excluídos da planilha!`, 'success');
+                else showToast('Excluído localmente (falha no Sheets).', 'warning');
+            } else {
+                showToast(`${count} testes excluídos localmente!`, 'success');
+            }
         }
     });
 
@@ -1716,7 +1777,7 @@ function bindEvents() {
     DOM.tableResponsive?.addEventListener('scroll', () => { if (DOM.scrollbarProxy) DOM.scrollbarProxy.scrollLeft = DOM.tableResponsive.scrollLeft; });
 
     // Delegação de ações
-    document.body.addEventListener('click', e => {
+    document.body.addEventListener('click', async e => {
         const target = e.target.closest('[data-action]');
         if (!target) { document.querySelectorAll('.action-dropdown.show').forEach(d => d.classList.remove('show')); return; }
         const { action, key, student, index } = target.dataset;
@@ -1739,7 +1800,7 @@ function bindEvents() {
         else if (action === 'copy-report' && s) {
             let text = `🏃 *C4 ASSESSORIA - TESTE*\n👤 Atleta: ${s.name}\n⏱️ ${s.testDist}m em ${formatTimeDisplay(s.timeStr)} (Pace: ${calculateTestStats(s.timeSec, s.testDist).pace})\n📅 Data: ${formatDate(s.date)}\n\n🎯 *ZONAS (VAM):*\n` +
                 AppState.config.zoneConfigs.map(z => `• ${z.name}: ${secondsToFormatted(calculatePaceFromVamPct(s.timeSec, s.testDist, z.max))} ~ ${secondsToFormatted(calculatePaceFromVamPct(s.timeSec, s.testDist, z.min))}/km`).join('\n');
-            navigator.clipboard.writeText(text).then(() => alert('📋 Relatório copiado!'));
+            navigator.clipboard.writeText(text).then(() => showToast('Relatório copiado com sucesso!', 'success'));
         } else if (action === 'whatsapp' && s) {
             let msg = `🏃 *C4 Assessoria - Zonas de Treino*\n👤 ${s.name}\n⏱️ ${s.testDist}m em ${formatTimeDisplay(s.timeStr)}\n📅 ${formatDate(s.date)}\n\n` +
                 AppState.config.zoneConfigs.map(z => `• *${z.name}:* ${secondsToFormatted(calculatePaceFromVamPct(s.timeSec, s.testDist, z.max))} ~ ${secondsToFormatted(calculatePaceFromVamPct(s.timeSec, s.testDist, z.min))}/km`).join('\n');
@@ -1759,7 +1820,13 @@ function bindEvents() {
         } else if (action === 'delete' && s && confirm(`Excluir o teste de "${s.name}"?`)) {
             AppState.students = AppState.students.filter(x => buildTestKey(x.name, x.date, x.testDist) !== key);
             saveData(); renderTable();
-            if (s.id) postToSheets('excluirTeste', { id: String(s.id) });
+            if (s.id) {
+                const ok = await postToSheets('excluirTeste', { id: String(s.id) });
+                if (ok) showToast(`Teste de ${s.name} excluído!`, 'success');
+                else showToast('Excluído localmente (falha no Sheets).', 'warning');
+            } else {
+                showToast(`Teste de ${s.name} excluído!`, 'success');
+            }
         }
     });
 
@@ -1783,7 +1850,7 @@ function bindEvents() {
     DOM.addStudentForm?.addEventListener('submit', async e => {
         e.preventDefault();
         const sec = timeToSeconds(DOM.testTime.value.trim()), dist = parseInt(DOM.testDistance.value), name = DOM.studentName.value.trim();
-        if (!sec || !dist) return alert('Tempo ou distância inválidos.');
+        if (!sec || !dist) return showToast('Tempo ou distância inválidos.', 'error');
         const orig = DOM.editOriginalKey.value;
         const rec = {
             id: orig ? (AppState.students.find(s => buildTestKey(s.name, s.date, s.testDist) === orig)?.id || generateUid()) : generateUid(),
@@ -1795,7 +1862,11 @@ function bindEvents() {
         else AppState.students.push(rec);
 
         saveData(); toggleForm(); renderTable();
-        await postToSheets('salvarTeste', rec);
+        showToast(orig ? 'Alterações salvas localmente!' : 'Novo teste registrado!', 'success');
+        
+        const ok = await postToSheets('salvarTeste', rec);
+        if (ok) showToast('Sincronizado na planilha!', 'success');
+        else showToast('Salvo localmente (offline do Sheets).', 'warning');
     });
 
     DOM.btnCertTabZones?.addEventListener('click', () => { DOM.btnCertTabZones.classList.add('active'); DOM.btnCertTabCongrats.classList.remove('active'); DOM.directCertContainer.innerHTML = buildCertificateHtml(AppState.ui.currentExportStudent, 'zones'); });
@@ -1808,6 +1879,7 @@ function bindEvents() {
         if (!card) return;
         const canvas = await html2canvas(card, { scale: 3, backgroundColor: '#080d1a', useCORS: true, allowTaint: true });
         const a = document.createElement('a'); a.download = `Story_C4_${Date.now()}.png`; a.href = canvas.toDataURL('image/png'); a.click();
+        showToast('Story baixado!', 'success');
     });
 
     DOM.btnWhatsAppStory?.addEventListener('click', async () => {
@@ -1821,7 +1893,7 @@ function bindEvents() {
 }
 
 /* =========================================================================
-   10. INICIALIZAÇÃO
+   11. INICIALIZAÇÃO
    ========================================================================= */
 document.addEventListener('DOMContentLoaded', () => {
     initDOM();
